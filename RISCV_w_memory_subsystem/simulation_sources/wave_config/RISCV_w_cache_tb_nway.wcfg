@@ -12,17 +12,16 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="1000000fs"></ZoomEndTime>
-      <Cursor1Time time="275000fs"></Cursor1Time>
+      <ZoomStartTime time="9452950fs"></ZoomStartTime>
+      <ZoomEndTime time="11616951fs"></ZoomEndTime>
+      <Cursor1Time time="5050000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="223"></NameColumnWidth>
+      <NameColumnWidth column_width="219"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="203" />
+   <WVObjectSize size="204" />
    <wave_markers>
-      <marker label="" time="5640000" />
       <marker label="" time="4900000" />
       <marker label="" time="6590000" />
       <marker label="" time="7290000" />
@@ -34,6 +33,14 @@
       <marker label="" time="11880000" />
       <marker label="" time="12850000" />
       <marker label="" time="13520000" />
+      <marker label="" time="5820000" />
+      <marker label="" time="4610000" />
+      <marker label="" time="3310000" />
+      <marker label="" time="2570000" />
+      <marker label="" time="1871453" />
+      <marker label="" time="440000" />
+      <marker label="" time="110000" />
+      <marker label="" time="5050000" />
    </wave_markers>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/clk">
       <obj_property name="ElementShortName">clk</obj_property>
@@ -334,6 +341,156 @@
       <obj_property name="CustomSignalColor">#00FF7F</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="isExpanded"></obj_property>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[0]">
+         <obj_property name="ElementShortName">[0][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[0][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[1]">
+         <obj_property name="ElementShortName">[1][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[1][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[2]">
+         <obj_property name="ElementShortName">[2][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[2][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[3]">
+         <obj_property name="ElementShortName">[3][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[3][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[4]">
+         <obj_property name="ElementShortName">[4][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[4][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[5]">
+         <obj_property name="ElementShortName">[5][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[5][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[6]">
+         <obj_property name="ElementShortName">[6][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[6][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[7]">
+         <obj_property name="ElementShortName">[7][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[7][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[8]">
+         <obj_property name="ElementShortName">[8][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[8][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[9]">
+         <obj_property name="ElementShortName">[9][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[9][31:0]</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[10]">
+         <obj_property name="ElementShortName">[10][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[10][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[11]">
+         <obj_property name="ElementShortName">[11][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[11][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[12]">
+         <obj_property name="ElementShortName">[12][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[12][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[13]">
+         <obj_property name="ElementShortName">[13][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[13][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[14]">
+         <obj_property name="ElementShortName">[14][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[14][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[15]">
+         <obj_property name="ElementShortName">[15][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[15][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[16]">
+         <obj_property name="ElementShortName">[16][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[16][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[17]">
+         <obj_property name="ElementShortName">[17][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[17][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[18]">
+         <obj_property name="ElementShortName">[18][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[18][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[19]">
+         <obj_property name="ElementShortName">[19][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[19][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[20]">
+         <obj_property name="ElementShortName">[20][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[20][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[21]">
+         <obj_property name="ElementShortName">[21][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[21][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[22]">
+         <obj_property name="ElementShortName">[22][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[22][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[23]">
+         <obj_property name="ElementShortName">[23][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[23][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[24]">
+         <obj_property name="ElementShortName">[24][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[24][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[25]">
+         <obj_property name="ElementShortName">[25][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[25][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[26]">
+         <obj_property name="ElementShortName">[26][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[26][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[27]">
+         <obj_property name="ElementShortName">[27][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[27][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[28]">
+         <obj_property name="ElementShortName">[28][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[28][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[29]">
+         <obj_property name="ElementShortName">[29][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[29][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[30]">
+         <obj_property name="ElementShortName">[30][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[30][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
+      <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/TOP_RISCV_1/data_path_1/register_bank_1/reg_bank_s[31]">
+         <obj_property name="ElementShortName">[31][31:0]</obj_property>
+         <obj_property name="ObjectShortName">[31][31:0]</obj_property>
+         <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+      </wvobject>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">LEVEL1</obj_property>
@@ -355,30 +512,35 @@
       <obj_property name="ObjectShortName">ram_array[0:255][31:0]</obj_property>
       <obj_property name="CustomSignalColor">#F0E68C</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_cache/addra">
       <obj_property name="ElementShortName">addra[7:0]</obj_property>
       <obj_property name="ObjectShortName">addra[7:0]</obj_property>
       <obj_property name="CustomSignalColor">#F0E68C</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_cache/dina">
       <obj_property name="ElementShortName">dina[31:0]</obj_property>
       <obj_property name="ObjectShortName">dina[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#F0E68C</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_cache/wea">
       <obj_property name="ElementShortName">wea[3:0]</obj_property>
       <obj_property name="ObjectShortName">wea[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#F0E68C</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_cache/douta">
       <obj_property name="ElementShortName">douta[31:0]</obj_property>
       <obj_property name="ObjectShortName">douta[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#F0E68C</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">instr tag store</obj_property>
@@ -386,22 +548,25 @@
       <obj_property name="BkColor">#F0E68C</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_tag_store/ram_s">
-      <obj_property name="ElementShortName">ram_s[0:31][20:0]</obj_property>
-      <obj_property name="ObjectShortName">ram_s[0:31][20:0]</obj_property>
+      <obj_property name="ElementShortName">ram_s[0:31][18:0]</obj_property>
+      <obj_property name="ObjectShortName">ram_s[0:31][18:0]</obj_property>
       <obj_property name="CustomSignalColor">#FFD700</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_tag_store/addra">
       <obj_property name="ElementShortName">addra[4:0]</obj_property>
       <obj_property name="ObjectShortName">addra[4:0]</obj_property>
       <obj_property name="CustomSignalColor">#FFD700</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_tag_store/dina">
-      <obj_property name="ElementShortName">dina[20:0]</obj_property>
-      <obj_property name="ObjectShortName">dina[20:0]</obj_property>
+      <obj_property name="ElementShortName">dina[18:0]</obj_property>
+      <obj_property name="ObjectShortName">dina[18:0]</obj_property>
       <obj_property name="CustomSignalColor">#FFD700</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_tag_store/wea">
       <obj_property name="ElementShortName">wea</obj_property>
@@ -410,10 +575,18 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_tag_store/douta">
-      <obj_property name="ElementShortName">douta[20:0]</obj_property>
-      <obj_property name="ObjectShortName">douta[20:0]</obj_property>
+      <obj_property name="ElementShortName">douta[18:0]</obj_property>
+      <obj_property name="ObjectShortName">douta[18:0]</obj_property>
       <obj_property name="CustomSignalColor">#FFD700</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
+   </wvobject>
+   <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/lvl1ia_ts_valid_reg">
+      <obj_property name="ElementShortName">lvl1ia_ts_valid_reg[31:0]</obj_property>
+      <obj_property name="ObjectShortName">lvl1ia_ts_valid_reg[31:0]</obj_property>
+      <obj_property name="CustomSignalColor">#FFD700</obj_property>
+      <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">DATA</obj_property>
@@ -430,31 +603,35 @@
       <obj_property name="ObjectShortName">ram_array[0:255][31:0]</obj_property>
       <obj_property name="CustomSignalColor">#F0E68C</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/data_cache/addra">
       <obj_property name="ElementShortName">addra[7:0]</obj_property>
       <obj_property name="ObjectShortName">addra[7:0]</obj_property>
       <obj_property name="CustomSignalColor">#F0E68C</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/data_cache/dina">
       <obj_property name="ElementShortName">dina[31:0]</obj_property>
       <obj_property name="ObjectShortName">dina[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#F0E68C</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/data_cache/wea">
       <obj_property name="ElementShortName">wea[3:0]</obj_property>
       <obj_property name="ObjectShortName">wea[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#F0E68C</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/data_cache/douta">
       <obj_property name="ElementShortName">douta[31:0]</obj_property>
       <obj_property name="ObjectShortName">douta[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#F0E68C</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">data tag store</obj_property>
@@ -466,18 +643,21 @@
       <obj_property name="ObjectShortName">ram_s[0:31][20:0]</obj_property>
       <obj_property name="CustomSignalColor">#FFD700</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/data_tag_store/addra">
       <obj_property name="ElementShortName">addra[4:0]</obj_property>
       <obj_property name="ObjectShortName">addra[4:0]</obj_property>
       <obj_property name="CustomSignalColor">#FFD700</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/data_tag_store/dina">
       <obj_property name="ElementShortName">dina[20:0]</obj_property>
       <obj_property name="ObjectShortName">dina[20:0]</obj_property>
       <obj_property name="CustomSignalColor">#FFD700</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/data_tag_store/wea">
       <obj_property name="ElementShortName">wea</obj_property>
@@ -490,6 +670,7 @@
       <obj_property name="ObjectShortName">douta[20:0]</obj_property>
       <obj_property name="CustomSignalColor">#FFD700</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">CACHE CONTROL</obj_property>
@@ -513,6 +694,7 @@
       <obj_property name="ObjectShortName">cc_counter_reg[2:0]</obj_property>
       <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">MEMORY CONTROL</obj_property>
@@ -536,6 +718,7 @@
       <obj_property name="ObjectShortName">mc_counter_reg[2:0]</obj_property>
       <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">LEVEL2</obj_property>
@@ -565,18 +748,21 @@
       <obj_property name="ObjectShortName">lvl2a_c_idx_s[6:0]</obj_property>
       <obj_property name="CustomSignalColor">#808000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/lvl2a_c_tag_s">
       <obj_property name="ElementShortName">lvl2a_c_tag_s[16:0]</obj_property>
       <obj_property name="ObjectShortName">lvl2a_c_tag_s[16:0]</obj_property>
       <obj_property name="CustomSignalColor">#808000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/addra_lvl2_tag_s">
       <obj_property name="ElementShortName">addra_lvl2_tag_s[6:0]</obj_property>
       <obj_property name="ObjectShortName">addra_lvl2_tag_s[6:0]</obj_property>
       <obj_property name="CustomSignalColor">#808000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">MAPS of BKK, design for sim</obj_property>
@@ -588,26 +774,26 @@
       <obj_property name="ObjectShortName">lvl2_d4s_valid_map[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#008080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/lvl2_d4s_dirty_map">
       <obj_property name="ElementShortName">lvl2_d4s_dirty_map[3:0]</obj_property>
       <obj_property name="ObjectShortName">lvl2_d4s_dirty_map[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#008080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/lvl2_d4s_data_map">
       <obj_property name="ElementShortName">lvl2_d4s_data_map[3:0]</obj_property>
       <obj_property name="ObjectShortName">lvl2_d4s_data_map[3:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FF0000</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/lvl2_d4s_instr_map">
       <obj_property name="ElementShortName">lvl2_d4s_instr_map[3:0]</obj_property>
       <obj_property name="ObjectShortName">lvl2_d4s_instr_map[3:0]</obj_property>
-      <obj_property name="CustomSignalColor">#FF0000</obj_property>
+      <obj_property name="CustomSignalColor">#008080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">BINARYRADIX</obj_property>
    </wvobject>
@@ -627,6 +813,7 @@
       <obj_property name="ObjectShortName">lvl2_hit_index</obj_property>
       <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/lvl2_invalid_found_s">
       <obj_property name="ElementShortName">lvl2_invalid_found_s</obj_property>
@@ -637,8 +824,9 @@
    <wvobject type="other" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/lvl2_invalid_index">
       <obj_property name="ElementShortName">lvl2_invalid_index</obj_property>
       <obj_property name="ObjectShortName">lvl2_invalid_index</obj_property>
-      <obj_property name="CustomSignalColor">#E0FFFF</obj_property>
+      <obj_property name="CustomSignalColor">#808080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/lvl2_victim_map">
       <obj_property name="ElementShortName">lvl2_victim_map[3:0]</obj_property>
@@ -652,6 +840,7 @@
       <obj_property name="ObjectShortName">lvl2_victim_index</obj_property>
       <obj_property name="CustomSignalColor">#00FFFF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/lvl2_nextv_map">
       <obj_property name="ElementShortName">lvl2_nextv_map[3:0]</obj_property>
@@ -665,33 +854,35 @@
       <obj_property name="ObjectShortName">lvl2_nextv_index</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/evictor_reg">
       <obj_property name="ElementShortName">evictor_reg[3:0]</obj_property>
       <obj_property name="ObjectShortName">evictor_reg[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#008080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/evictor_next">
       <obj_property name="ElementShortName">evictor_next[3:0]</obj_property>
       <obj_property name="ObjectShortName">evictor_next[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#008080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="other" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/lvl2_rando_index">
       <obj_property name="ElementShortName">lvl2_rando_index</obj_property>
       <obj_property name="ObjectShortName">lvl2_rando_index</obj_property>
       <obj_property name="CustomSignalColor">#008080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/lvl2_vnv_map">
       <obj_property name="ElementShortName">lvl2_vnv_map[3:0]</obj_property>
       <obj_property name="ObjectShortName">lvl2_vnv_map[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#008080</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">lvl2 cache</obj_property>
@@ -713,26 +904,28 @@
       <obj_property name="ObjectShortName">addra[9:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF7F</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/dina">
       <obj_property name="ElementShortName">dina[31:0]</obj_property>
       <obj_property name="ObjectShortName">dina[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF7F</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/wea">
       <obj_property name="ElementShortName">wea[3:0]</obj_property>
       <obj_property name="ObjectShortName">wea[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF7F</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/douta">
       <obj_property name="ElementShortName">douta[31:0]</obj_property>
       <obj_property name="ObjectShortName">douta[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF7F</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">portB</obj_property>
@@ -744,24 +937,28 @@
       <obj_property name="ObjectShortName">addrb[9:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF00</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/dinb">
       <obj_property name="ElementShortName">dinb[31:0]</obj_property>
       <obj_property name="ObjectShortName">dinb[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF00</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/web">
       <obj_property name="ElementShortName">web[3:0]</obj_property>
       <obj_property name="ObjectShortName">web[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF00</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/doutb">
       <obj_property name="ElementShortName">doutb[31:0]</obj_property>
       <obj_property name="ObjectShortName">doutb[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF00</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">WAY 1</obj_property>
@@ -778,25 +975,28 @@
       <obj_property name="ObjectShortName">addra[9:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/dina">
       <obj_property name="ElementShortName">dina[31:0]</obj_property>
       <obj_property name="ObjectShortName">dina[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/wea">
       <obj_property name="ElementShortName">wea[3:0]</obj_property>
       <obj_property name="ObjectShortName">wea[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/douta">
       <obj_property name="ElementShortName">douta[31:0]</obj_property>
       <obj_property name="ObjectShortName">douta[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">portB</obj_property>
@@ -808,25 +1008,28 @@
       <obj_property name="ObjectShortName">addrb[9:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/dinb">
       <obj_property name="ElementShortName">dinb[31:0]</obj_property>
       <obj_property name="ObjectShortName">dinb[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/web">
       <obj_property name="ElementShortName">web[3:0]</obj_property>
       <obj_property name="ObjectShortName">web[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/doutb">
       <obj_property name="ElementShortName">doutb[31:0]</obj_property>
       <obj_property name="ObjectShortName">doutb[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">WAY 2</obj_property>
@@ -843,24 +1046,28 @@
       <obj_property name="ObjectShortName">addra[9:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF7F</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/dina">
       <obj_property name="ElementShortName">dina[31:0]</obj_property>
       <obj_property name="ObjectShortName">dina[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF7F</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/wea">
       <obj_property name="ElementShortName">wea[3:0]</obj_property>
       <obj_property name="ObjectShortName">wea[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF7F</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/douta">
       <obj_property name="ElementShortName">douta[31:0]</obj_property>
       <obj_property name="ObjectShortName">douta[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF7F</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">portB</obj_property>
@@ -872,24 +1079,28 @@
       <obj_property name="ObjectShortName">addrb[9:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF00</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/dinb">
       <obj_property name="ElementShortName">dinb[31:0]</obj_property>
       <obj_property name="ObjectShortName">dinb[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF00</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/web">
       <obj_property name="ElementShortName">web[3:0]</obj_property>
       <obj_property name="ObjectShortName">web[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF00</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/doutb">
       <obj_property name="ElementShortName">doutb[31:0]</obj_property>
       <obj_property name="ObjectShortName">doutb[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#00FF00</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">WAY 3</obj_property>
@@ -906,24 +1117,28 @@
       <obj_property name="ObjectShortName">addra[9:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/dina">
       <obj_property name="ElementShortName">dina[31:0]</obj_property>
       <obj_property name="ObjectShortName">dina[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/wea">
       <obj_property name="ElementShortName">wea[3:0]</obj_property>
       <obj_property name="ObjectShortName">wea[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/douta">
       <obj_property name="ElementShortName">douta[31:0]</obj_property>
       <obj_property name="ObjectShortName">douta[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">portB</obj_property>
@@ -935,24 +1150,28 @@
       <obj_property name="ObjectShortName">addrb[9:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/dinb">
       <obj_property name="ElementShortName">dinb[31:0]</obj_property>
       <obj_property name="ObjectShortName">dinb[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/web">
       <obj_property name="ElementShortName">web[3:0]</obj_property>
       <obj_property name="ObjectShortName">web[3:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/doutb">
       <obj_property name="ElementShortName">doutb[31:0]</obj_property>
       <obj_property name="ObjectShortName">doutb[31:0]</obj_property>
       <obj_property name="CustomSignalColor">#008000</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">lvl2 tag store</obj_property>
@@ -974,13 +1193,14 @@
       <obj_property name="ObjectShortName">addra[6:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(0)\/level_2_tag_store/dina">
       <obj_property name="ElementShortName">dina[22:0]</obj_property>
       <obj_property name="ObjectShortName">dina[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(0)\/level_2_tag_store/wea">
       <obj_property name="ElementShortName">wea</obj_property>
@@ -993,7 +1213,7 @@
       <obj_property name="ObjectShortName">douta[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">portB</obj_property>
@@ -1005,12 +1225,14 @@
       <obj_property name="ObjectShortName">addrb[6:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(0)\/level_2_tag_store/dinb">
       <obj_property name="ElementShortName">dinb[22:0]</obj_property>
       <obj_property name="ObjectShortName">dinb[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(0)\/level_2_tag_store/web">
       <obj_property name="ElementShortName">web</obj_property>
@@ -1023,6 +1245,7 @@
       <obj_property name="ObjectShortName">doutb[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">WAY 1</obj_property>
@@ -1039,13 +1262,14 @@
       <obj_property name="ObjectShortName">addra[6:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(1)\/level_2_tag_store/dina">
       <obj_property name="ElementShortName">dina[22:0]</obj_property>
       <obj_property name="ObjectShortName">dina[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(1)\/level_2_tag_store/wea">
       <obj_property name="ElementShortName">wea</obj_property>
@@ -1058,7 +1282,7 @@
       <obj_property name="ObjectShortName">douta[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">portB</obj_property>
@@ -1070,12 +1294,14 @@
       <obj_property name="ObjectShortName">addrb[6:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(1)\/level_2_tag_store/dinb">
       <obj_property name="ElementShortName">dinb[22:0]</obj_property>
       <obj_property name="ObjectShortName">dinb[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(1)\/level_2_tag_store/web">
       <obj_property name="ElementShortName">web</obj_property>
@@ -1088,7 +1314,7 @@
       <obj_property name="ObjectShortName">doutb[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">WAY 2</obj_property>
@@ -1105,13 +1331,14 @@
       <obj_property name="ObjectShortName">addra[6:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(2)\/level_2_tag_store/dina">
       <obj_property name="ElementShortName">dina[22:0]</obj_property>
       <obj_property name="ObjectShortName">dina[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(2)\/level_2_tag_store/wea">
       <obj_property name="ElementShortName">wea</obj_property>
@@ -1124,7 +1351,7 @@
       <obj_property name="ObjectShortName">douta[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">portB</obj_property>
@@ -1136,12 +1363,14 @@
       <obj_property name="ObjectShortName">addrb[6:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(2)\/level_2_tag_store/dinb">
       <obj_property name="ElementShortName">dinb[22:0]</obj_property>
       <obj_property name="ObjectShortName">dinb[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(2)\/level_2_tag_store/web">
       <obj_property name="ElementShortName">web</obj_property>
@@ -1154,6 +1383,7 @@
       <obj_property name="ObjectShortName">doutb[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">WAY 3</obj_property>
@@ -1170,13 +1400,14 @@
       <obj_property name="ObjectShortName">addra[6:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(3)\/level_2_tag_store/dina">
       <obj_property name="ElementShortName">dina[22:0]</obj_property>
       <obj_property name="ObjectShortName">dina[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(3)\/level_2_tag_store/wea">
       <obj_property name="ElementShortName">wea</obj_property>
@@ -1189,7 +1420,7 @@
       <obj_property name="ObjectShortName">douta[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">portB</obj_property>
@@ -1201,13 +1432,14 @@
       <obj_property name="ObjectShortName">addrb[6:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(3)\/level_2_tag_store/dinb">
       <obj_property name="ElementShortName">dinb[22:0]</obj_property>
       <obj_property name="ObjectShortName">dinb[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_tag_store_generate(3)\/level_2_tag_store/web">
       <obj_property name="ElementShortName">web</obj_property>
@@ -1220,6 +1452,7 @@
       <obj_property name="ObjectShortName">doutb[22:0]</obj_property>
       <obj_property name="CustomSignalColor">#0000A0</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject fp_name="divider187" type="divider">
       <obj_property name="label">PHYSICAL</obj_property>
@@ -1231,6 +1464,7 @@
       <obj_property name="ObjectShortName">ram_array[0:131071][31:0]</obj_property>
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/addr_phy_s">
       <obj_property name="ElementShortName">addr_phy_s[28:0]</obj_property>
@@ -1242,28 +1476,28 @@
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/addr_phy_short_s">
       <obj_property name="ElementShortName">addr_phy_short_s[16:0]</obj_property>
       <obj_property name="ObjectShortName">addr_phy_short_s[16:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/dread_phy_s">
       <obj_property name="ElementShortName">dread_phy_s[31:0]</obj_property>
       <obj_property name="ObjectShortName">dread_phy_s[31:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/we_phy_s">
       <obj_property name="ElementShortName">we_phy_s[3:0]</obj_property>
       <obj_property name="ObjectShortName">we_phy_s[3:0]</obj_property>
-      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/dwrite_phy_s">
       <obj_property name="ElementShortName">dwrite_phy_s[31:0]</obj_property>
       <obj_property name="ObjectShortName">dwrite_phy_s[31:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
+      <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
       <obj_property name="CustomSignalColor">#FF00FF</obj_property>
       <obj_property name="UseCustomSignalColor">true</obj_property>
    </wvobject>
