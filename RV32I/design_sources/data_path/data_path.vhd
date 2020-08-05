@@ -196,8 +196,6 @@ begin
    --pc_adder_s update
    pc_adder_if_s <= std_logic_vector(unsigned(pc_reg_if_s) + to_unsigned(4, 32));
 
-
-
    --branch condition 
    branch_condition_o <='1' when ((signed(alu_forward_a_ex_s) = signed(alu_forward_b_ex_s)) and branch_op_i = "00") else
                         '1' when ((signed(alu_forward_a_ex_s) < signed(alu_forward_b_ex_s)) and branch_op_i = "10") else

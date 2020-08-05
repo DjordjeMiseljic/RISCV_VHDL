@@ -15,6 +15,7 @@ generic (PHY_ADDR_SPACE : natural := 512*1024*1024; -- 512 MB
 			-- controller drives ce for RISC
 			data_ready_o : out std_logic;
 			instr_ready_o : out std_logic;
+			fencei_i : in std_logic;
 			-- NOTE Just for test bench, to simulate real memory
 			addr_phy_o 			: out std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
 			dread_phy_i 		: in std_logic_vector(31 downto 0);
@@ -44,7 +45,6 @@ architecture Behavioral of cache_contr_nway_vnv is
 	constant LVL1C_INDEX_WIDTH : integer := LVL1C_ADDR_WIDTH - BLOCK_ADDR_WIDTH;
 	constant LVL1C_TAG_WIDTH : integer := PHY_ADDR_WIDTH - LVL1C_ADDR_WIDTH;
 	constant LVL1DC_BKK_WIDTH : integer := 2;
-	--constant LVL1IC_BKK_WIDTH : integer := 2;
 	constant LVL2C_ADDR_WIDTH : integer := clogb2(LVL2_CACHE_SIZE);
 	constant LVL2C_INDEX_WIDTH : integer := LVL2C_ADDR_WIDTH - BLOCK_ADDR_WIDTH;
 	constant LVL2C_TAG_WIDTH : integer := PHY_ADDR_WIDTH - LVL2C_ADDR_WIDTH;
@@ -568,7 +568,7 @@ begin
 	lvl1i_ts_valid : process(clk)is
 	begin
 		if(rising_edge(clk))then
-			if(reset= '0' )then --or "FENCE.I SIGNAL COMING FROM CONTROL FLOW" 
+			if(reset = '0' or fencei_i = '1')then --or "FENCE.I SIGNAL COMING FROM CONTROL FLOW" 
 				lvl1ia_ts_valid_reg <= (others => '0');
 			else
 				lvl1ia_ts_valid_reg <= lvl1ia_ts_valid_next;
@@ -608,7 +608,7 @@ begin
 		lvl1d_c_hit_s, lvl1da_ts_bkk_s, lvl2da_c_idx_s, cc_counter_reg, cc_counter_incr, lvl2ia_c_idx_s, lvl1ia_ts_valid_reg,
 		lvl2a_ts_tag_s, lvl1i_c_idx_s, lvl2da_c_tag_s, lvl1d_c_idx_s, dreada_lvl2_cache_s,
 		lvl1d_c_tag_s, data_access_s, re_data_i, lvl1da_ts_tag_s,  flush_lvl1d_s, invalidate_lvl1d_s, invalidate_lvl1i_s,
-		lvl2il_c_idx_s, lvl2_hit_index, lvl2a_ts_nbkk_s, lvl1ia_ts_tag_s, lvl2dl_c_idx_s, lvl2dl_c_tag_s, --lvl2_ddirty_index, lvl2_dirty_index,
+		lvl2il_c_idx_s, lvl2_hit_index, lvl2a_ts_nbkk_s, lvl1ia_ts_tag_s, lvl2dl_c_idx_s, lvl2dl_c_tag_s, 
 		lvl2_nextv_index, lvl2_victim_index, lvl2_rando_index,lvl2_dflush_index,lvl2_iflush_index) is
 	begin
 		check_lvl2_s <= '0';

@@ -25,6 +25,7 @@ architecture Behavioral of RISCV_w_cache is
 	-- Other signals
 		signal instr_ready_s : std_logic;
 		signal data_ready_s : std_logic;
+		signal fencei_s : std_logic;
 
 
    -- Instruction cache signals
@@ -58,9 +59,10 @@ begin
    TOP_RISCV_1 : entity work.TOP_RISCV
       port map (
          clk => clk,
+         reset => reset,
          instr_ready_i => instr_ready_s,
 			data_ready_i => data_ready_s,
-         reset => reset,
+			fencei_o => fencei_s,
 
          instr_mem_read_i    => dread_instr_cache_s,
          instr_mem_address_o => addr_instr_cache_32_s,
@@ -88,9 +90,10 @@ begin
 		)
 		port map(
 			clk => clk,
+			reset => reset,
 			data_ready_o => data_ready_s,
 			instr_ready_o => instr_ready_s,
-			reset => reset,
+			fencei_i => fencei_s,
 		-- NOTE Just for test bench, to simulate real memory
 			addr_phy_o => addr_phy_s,
 			dread_phy_i => dread_phy_s,

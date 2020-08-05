@@ -15,7 +15,7 @@ entity ctrl_decoder is
       set_a_zero_o  : out std_logic;
       rs1_in_use_o  : out std_logic;
       rs2_in_use_o  : out std_logic;
-      fence_o		  : out std_logic;
+      fencei_o		  : out std_logic;
       alu_2bit_op_o : out std_logic_vector(1 downto 0)
 
       );
@@ -37,7 +37,7 @@ begin
       set_a_zero_o  <= '0';
       rs1_in_use_o  <= '0';
       rs2_in_use_o  <= '0';
-		fence_o 		  <= '0';
+		fencei_o 	  <= '0';
       case opcode_i is
          when "0000011" =>              --LOAD
             mem_to_reg_o  <= "10";
@@ -87,7 +87,7 @@ begin
             rd_we_o       <= '1';
             alu_src_b_o   <= '1';
          when "0001111" =>              --FENCE.I
-				fence_o 		  <= '1';
+				fencei_o 		  <= '1';
          when others =>
       end case;
    end process;

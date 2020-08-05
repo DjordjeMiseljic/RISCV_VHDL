@@ -35,6 +35,7 @@ entity control_path is
       -- control signals for stalling
       pc_en_o            : out std_logic;
       if_id_en_o         : out std_logic;
+		fencei_o				 : out std_logic;
 		-- detect read from data memory
       data_mem_re_o         : out std_logic
       );
@@ -47,6 +48,7 @@ architecture behavioral of control_path is
    signal if_id_en_s        : std_logic;   
    signal if_id_flush_s     : std_logic;   
    signal id_ex_flush_s     : std_logic;   
+	signal pc_en_s 			 : std_logic;
    
    --*********  INSTRUCTION DECODE **************
    signal branch_type_id_s  : std_logic_vector(1 downto 0);
@@ -68,7 +70,7 @@ architecture behavioral of control_path is
    signal rs2_address_id_s  : std_logic_vector (4 downto 0);
    signal rd_address_id_s   : std_logic_vector (4 downto 0);
 
-   signal fence_id_s        : std_logic;
+   signal fencei_id_s        : std_logic;
 
    --*********       EXECUTE       **************
 	signal branch_type_ex_s  : std_logic_vector(1 downto 0);
@@ -248,7 +250,7 @@ begin
          rd_we_o       => rd_we_id_s,
          rs1_in_use_o  => rs1_in_use_id_s,
          rs2_in_use_o  => rs2_in_use_id_s,
-         fence_o  	  => fence_id_s,
+         fencei_o  	   => fencei_id_s,
          alu_2bit_op_o => alu_2bit_op_id_s);
 
    -- ALU decoder
@@ -282,7 +284,7 @@ begin
          rd_address_ex_i => rd_address_ex_s,
          mem_to_reg_ex_i => mem_to_reg_ex_s,
 
-         pc_en_o        => pc_en_o,
+         pc_en_o        => pc_en_s,
          if_id_en_o     => if_id_en_s,
          control_pass_o => control_pass_s);
 
@@ -297,7 +299,7 @@ begin
    alu_src_a_o   <= alu_src_a_ex_s;
    set_a_zero_o  <= set_a_zero_ex_s;
    rd_we_o       <= rd_we_wb_s;
-   if_id_flush_o <= if_id_flush_s;
+   if_id_flush_o <= if_id_flush_s or fencei_id_s;
    id_ex_flush_o <= id_ex_flush_s;
 
    -- load_type controls which bytes are taken from memory in wb stage
@@ -305,7 +307,9 @@ begin
 	-- cache controller needs to know about loads in memory phase
 	-- so it can validate in time that requested data is in data cache
 	data_mem_re_o <= mem_to_reg_mem_s(1); -- there is no "11" combination se we can use just upper bit
-
+	-- fence instruction needs to stall PC register
+	pc_en_o <= pc_en_s and (not fencei_id_s);
+	fencei_o <= fencei_id_s;
 
 end architecture;
 
