@@ -67,8 +67,11 @@ architecture behavioral of control_path is
    signal rs1_address_id_s  : std_logic_vector (4 downto 0);
    signal rs2_address_id_s  : std_logic_vector (4 downto 0);
    signal rd_address_id_s   : std_logic_vector (4 downto 0);
+
+   signal fence_id_s        : std_logic;
+
    --*********       EXECUTE       **************
-signal branch_type_ex_s  : std_logic_vector(1 downto 0);
+	signal branch_type_ex_s  : std_logic_vector(1 downto 0);
    signal funct3_ex_s       : std_logic_vector(2 downto 0);
    signal funct7_ex_s       : std_logic_vector(6 downto 0);
    signal alu_2bit_op_ex_s  : std_logic_vector(1 downto 0);
@@ -245,6 +248,7 @@ begin
          rd_we_o       => rd_we_id_s,
          rs1_in_use_o  => rs1_in_use_id_s,
          rs2_in_use_o  => rs2_in_use_id_s,
+         fence_o  	  => fence_id_s,
          alu_2bit_op_o => alu_2bit_op_id_s);
 
    -- ALU decoder

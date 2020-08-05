@@ -227,6 +227,8 @@ architecture Behavioral of cache_contr_nway_vnv is
 	--signal lvl2_nextv_index : std_logic_vector(LVL2C_ASSOC_LOG2-1 downto 0);
 	-- TODO Check if i can use integers
 	signal lvl2_hit_index : integer;
+	signal lvl2_dflush_index : integer;
+	signal lvl2_iflush_index : integer;
 	signal lvl2_dirty_index : integer;
 	signal lvl2_ddirty_index : integer;
 	signal lvl2_invalid_index : integer;
@@ -488,18 +490,41 @@ begin
 		end loop;
 	end process;
 
+	dflush: process(lvl2dl_c_tag_s,lvl2a_ts_tag_s, lvl2a_ts_bkk_s) is
+	begin
+		for i in (LVL2C_ASSOCIATIVITY-1) downto 0 loop
+			if ((lvl2dl_c_tag_s = lvl2a_ts_tag_s(i)) and (lvl2a_ts_bkk_s(i)(LVL2C_BKK_VALID)='1' or lvl2a_ts_bkk_s(i)(LVL2C_BKK_DIRTY)='1')) then
+				lvl2_dflush_index <= i;
+				exit;
+			else
+				lvl2_dflush_index <= 0;
+			end if;
+		end loop;
+	end process;
+	iflush: process(lvl2il_c_tag_s,lvl2a_ts_tag_s, lvl2a_ts_bkk_s) is
+	begin
+		for i in (LVL2C_ASSOCIATIVITY-1) downto 0 loop
+			if ((lvl2il_c_tag_s = lvl2a_ts_tag_s(i)) and (lvl2a_ts_bkk_s(i)(LVL2C_BKK_VALID)='1' or lvl2a_ts_bkk_s(i)(LVL2C_BKK_DIRTY)='1')) then
+				lvl2_iflush_index <= i;
+				exit;
+			else
+				lvl2_iflush_index <= 0;
+			end if;
+		end loop;
+	end process;
+
 	pcoder_dirty_detect: process(lvl2dl_c_tag_s,lvl2a_ts_tag_s, lvl2a_ts_bkk_s) is
 	begin
 		for i in (LVL2C_ASSOCIATIVITY-1) downto 0 loop
 			if ((lvl2dl_c_tag_s = lvl2a_ts_tag_s(i)) and lvl2a_ts_bkk_s(i)(LVL2C_BKK_VALID)='0' and lvl2a_ts_bkk_s(i)(LVL2C_BKK_DIRTY)='1') then
-				--lvl2_dirty_index <= std_logic_vector(to_unsigned(i,LVL2C_ASSOC_LOG2));
+				--lvl2_ddirty_index <= std_logic_vector(to_unsigned(i,LVL2C_ASSOC_LOG2));
 				lvl2_dirty_index <= i;
-				--lvl2a_c_dirty_s <= '1';
+				--lvl2a_c_ddirty_s <= '1';
 				exit;
 			else
-				--lvl2_dirty_index <= (others => '0');
+				--lvl2_ddirty_index <= (others => '0');
 				lvl2_dirty_index <= 0;
-				--lvl2a_c_dirty_s <= '0';
+				--lvl2a_c_ddirty_s <= '0';
 			end if;
 		end loop;
 	end process;
@@ -582,7 +607,7 @@ begin
 		lvl2a_ts_tag_s, lvl1i_c_idx_s, lvl2da_c_tag_s, lvl1d_c_idx_s, dreada_lvl2_cache_s,
 		lvl1d_c_tag_s, data_access_s, re_data_i, lvl1da_ts_tag_s,  flush_lvl1d_s, invalidate_lvl1d_s, invalidate_lvl1i_s,
 		lvl2il_c_idx_s, lvl2_hit_index, lvl2a_ts_nbkk_s, lvl1ia_ts_tag_s, lvl2dl_c_idx_s, lvl2dl_c_tag_s,
-		lvl2_nextv_index, lvl2_victim_index, lvl2_rando_index,lvl2_ddirty_index, lvl2_dirty_index) is
+		lvl2_nextv_index, lvl2_victim_index, lvl2_rando_index,lvl2_ddirty_index, lvl2_dirty_index,lvl2_dflush_index,lvl2_iflush_index) is
 	begin
 		check_lvl2_s <= '0';
 		lvl1_valid_s <= '1';
@@ -736,9 +761,9 @@ begin
 				if(cc_counter_reg = COUNTER_MIN)then 
 					-- block is going to be removed from lvl1ic
 					addra_lvl2_tag_s <= lvl2il_c_idx_s;
-					dwritea_lvl2_tag_s(lvl2_hit_index) <= 
-						lvl2a_ts_nbkk_s(lvl2_hit_index) & (lvl2a_ts_bkk_s(lvl2_hit_index) and "1011") & lvl2a_ts_tag_s(lvl2_hit_index);
-					wea_lvl2_tag_s(lvl2_hit_index) <= '1';
+					dwritea_lvl2_tag_s(lvl2_iflush_index) <= 
+						lvl2a_ts_nbkk_s(lvl2_iflush_index) & (lvl2a_ts_bkk_s(lvl2_iflush_index) and "1011") & lvl2a_ts_tag_s(lvl2_iflush_index);
+					wea_lvl2_tag_s(lvl2_iflush_index) <= '1';
 				end if;
 
 				if(cc_counter_reg = COUNTER_MAX)then 
@@ -766,9 +791,9 @@ begin
 				if(cc_counter_reg = COUNTER_MIN)then 
 					-- block is going to be removed from lvl1dc
 					addra_lvl2_tag_s <= lvl2dl_c_idx_s;
-					dwritea_lvl2_tag_s(lvl2_hit_index) <=  
-						lvl2a_ts_nbkk_s(lvl2_hit_index) & (lvl2a_ts_bkk_s(lvl2_hit_index) and "0111") & lvl2a_ts_tag_s(lvl2_hit_index);
-					wea_lvl2_tag_s(lvl2_hit_index) <= '1';
+					dwritea_lvl2_tag_s(lvl2_dflush_index) <=  
+						lvl2a_ts_nbkk_s(lvl2_dflush_index) & (lvl2a_ts_bkk_s(lvl2_dflush_index) and "0111") & lvl2a_ts_tag_s(lvl2_dflush_index);
+					wea_lvl2_tag_s(lvl2_dflush_index) <= '1';
 				end if;
 
 				if(cc_counter_reg = COUNTER_MAX)then 
@@ -787,8 +812,8 @@ begin
 				-- NOTE depending on mc fsm, see if this is needed or not
 				-- NOTE this is needed because fetching in cc and mc are overlapped
 				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
-				lvl2a_c_tag_s <= lvl2ia_c_tag_s;
-				lvl2a_c_idx_s <= lvl2ia_c_idx_s;
+				--lvl2a_c_tag_s <= lvl2ia_c_tag_s;
+				--lvl2a_c_idx_s <= lvl2ia_c_idx_s;
 
 				dwritea_lvl2_cache_s(lvl2_ddirty_index) <= dreada_data_cache_s;
 				wea_lvl2_cache_s(lvl2_ddirty_index)<= "1111";
