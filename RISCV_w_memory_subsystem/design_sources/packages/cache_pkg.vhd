@@ -32,8 +32,6 @@ package cache_pkg is
 		constant LVL1C_TAG_WIDTH : integer := PHY_ADDR_WIDTH - LVL1C_ADDR_WIDTH;
 	-- Number of bits needed to save bookkeeping, 1 for valid, 1 for dirty
 		constant LVL1DC_BKK_WIDTH : integer := 2;
-		constant LVL1IC_BKK_WIDTH : integer := 2;
-
 
 	-- Basic LVL2 cache parameters:
 	-- This will be size of both instruction and data caches in bytes
@@ -54,12 +52,12 @@ package cache_pkg is
 	-- Number of bits needed to save bookkeeping, 1 for valid, 1 for dirty
 		constant LVL2C_BKK_WIDTH : integer := 4;
 
-		constant LVL2C_BKK_VALID : integer := 0;
-		constant LVL2C_BKK_DIRTY : integer := 1;
-		constant LVL2C_BKK_INSTR : integer := 2;
-		constant LVL2C_BKK_DATA : integer := 3;
-		constant LVL2C_BKK_NEXTV : integer := 0; -- 4th bit
-		constant LVL2C_BKK_VICTIM : integer := 1; -- 5th bit
+		constant LVL2C_BKK_VALID : integer := 0; -- MSB-5
+		constant LVL2C_BKK_DIRTY : integer := 1; -- MSB-4
+		constant LVL2C_BKK_INSTR : integer := 2; -- MSB-3
+		constant LVL2C_BKK_DATA : integer := 3; -- MSB-2
+		constant LVL2C_BKK_NEXTV : integer := 0; -- MSB-1
+		constant LVL2C_BKK_VICTIM : integer := 1; -- MSB 
 
 		constant	LVL2C_ASSOCIATIVITY : natural := 4;
 		constant	LVL2C_ASSOC_LOG2 : natural := clogb2(LVL2C_ASSOCIATIVITY);

@@ -80,16 +80,10 @@ begin
     end if;
 end;
 
-
-
-
 -- Following code defines RAM
 signal ram_array : ram_type := init_from_file_or_zeroes(C_INIT_FILE);
 attribute ram_style : string;
 attribute ram_style of ram_array : signal is "distributed";
-
-
-
 
 
 begin
@@ -99,19 +93,20 @@ begin
 		 if(clk'event and clk = '1') then
 			  if(ena = '1') then
 				  -- Lines marked with + are added by user to the Xilinx template
-					if(rsta = '0')then -- +
-						ram_data_a <= ram_array(to_integer(unsigned(addra)));
-					else -- +
-						ram_data_a <= (others => '0'); -- +
-					end if; -- +
+					--if(rsta = '0')then -- +
+					ram_data_a <= ram_array(to_integer(unsigned(addra)));
+					--else -- +
+						--ram_data_a <= (others => '0'); -- +
+					--end if; -- +
 					for i in 0 to C_NB_COL-1 loop
-						 if(wea(i) = '1') then
-									ram_array(to_integer(unsigned(addra)))((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH) <= dina((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH);
-							  ram_data_a((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH) <= dina((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH);
-
+						if(wea(i) = '1') then
+							ram_array(to_integer(unsigned(addra)))((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH) <=
+								dina((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH);
+						  ram_data_a((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH) <=
+						  		dina((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH);
 						 else
-							  ram_data_a((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH) <= ram_array(to_integer(unsigned(addra)))((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH);
-
+							ram_data_a((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH) <=
+								ram_array(to_integer(unsigned(addra)))((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH);
 						 end if;
 					end loop;
 			  end if;

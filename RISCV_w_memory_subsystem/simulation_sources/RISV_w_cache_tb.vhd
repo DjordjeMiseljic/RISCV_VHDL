@@ -3,7 +3,7 @@
 -- Filename			: tb_RISCV_w_cache.vhd
 -- Author			: ChenYong
 -- Created On		: 2020-06-22 17:47
--- Last Modified	: 2020-06-24 02:57
+-- Last Modified	: 2020-08-06 04:35
 -- Version			: v1.0
 -- Description		: 
 --						
@@ -29,9 +29,7 @@ architecture behavior of tb_RISCV_w_cache is
 		addr_phy_o		: out	std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
 		dread_phy_i		: in	std_logic_vector(31 downto 0);
 		dwrite_phy_o	: out	std_logic_vector(31 downto 0);
-		we_phy_o		: out	std_logic_vector(3 downto 0);
-		dread_instr		: out	std_logic_vector(31 downto 0);
-		dread_data		: out	std_logic_vector(31 downto 0)
+		we_phy_o		: out	std_logic_vector(3 downto 0)
 	);
 	end component;
 	    
@@ -53,12 +51,11 @@ architecture behavior of tb_RISCV_w_cache is
 	signal	regce_phy_s		: std_logic;
 	signal	rst_phy_s		: std_logic;
 
-    signal	dread_data_s		: std_logic_vector(31 downto 0);
+   signal	dread_data_s		: std_logic_vector(31 downto 0);
 	signal	dread_instr_s		: std_logic_vector(31 downto 0);
 
 	-- Clock period definitions
 	constant clk_period : time := 10 ns;
-   
 
 begin
 	
@@ -70,9 +67,7 @@ begin
 		addr_phy_o		=>	addr_phy_s,
 		dread_phy_i		=>	dread_phy_s,
 		dwrite_phy_o	=>	dwrite_phy_s,
-		we_phy_o		=>	we_phy_s,
-		dread_instr		=>	dread_instr_s,
-		dread_data		=>	dread_data_s
+		we_phy_o		=>	we_phy_s
 	);
 
 	-- Clock process definitions

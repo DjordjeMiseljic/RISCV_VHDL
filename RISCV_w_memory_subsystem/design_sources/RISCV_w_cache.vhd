@@ -11,46 +11,38 @@ entity RISCV_w_cache is
 			addr_phy_o 		: out std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
 			dread_phy_i 		: in std_logic_vector(31 downto 0);
 			dwrite_phy_o		: out std_logic_vector(31 downto 0);
-         we_phy_o			: out std_logic_vector(3 downto 0);
-			--Instruction cache
-			dread_instr : out std_logic_vector(31 downto 0);
-			--Data cache
-			dread_data: out std_logic_vector(31 downto 0)
-
+         we_phy_o			: out std_logic_vector(3 downto 0)
 			);
 end entity;
 
 architecture Behavioral of RISCV_w_cache is
 
-	-- Other signals
-		signal instr_ready_s : std_logic;
-		signal data_ready_s : std_logic;
-		signal fencei_s : std_logic;
-
-
    -- Instruction cache signals
-		signal addr_instr_cache_s : std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
-		signal addr_instr_cache_32_s : std_logic_vector(31 downto 0);
-		signal dread_instr_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
-		--signal en_instr_cache_s : std_logic;
-		--signal rst_instr_cache_s : std_logic;
-
+	signal addr_instr_cache_s : std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+	signal addr_instr_cache_32_s : std_logic_vector(31 downto 0);
+	signal dread_instr_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
 
 	-- Data cache signals
-		signal addr_data_cache_s : std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
-		signal addr_data_cache_32_s : std_logic_vector(31 downto 0);
-		signal dwrite_data_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
-		signal dread_data_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0); 
-		signal we_data_cache_s : std_logic_vector(LVL1C_NUM_COL-1 downto 0);
-		signal en_data_cache_s : std_logic;
-		signal rst_data_cache_s : std_logic;
-		signal re_data_cache_s : std_logic; 
+	signal addr_data_cache_s : std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+	signal addr_data_cache_32_s : std_logic_vector(31 downto 0);
+	signal dwrite_data_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
+	signal dread_data_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0); 
+	signal we_data_cache_s : std_logic_vector(LVL1C_NUM_COL-1 downto 0);
+	signal en_data_cache_s : std_logic;
+	signal rst_data_cache_s : std_logic;
+	signal re_data_cache_s : std_logic; 
 
-		-- NOTE Just for test bench, to simulate real memory
-		signal addr_phy_s 		: std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
-		signal dread_phy_s 	: std_logic_vector(31 downto 0);
-		signal dwrite_phy_s		: std_logic_vector(31 downto 0);
-		signal we_phy_s			: std_logic_vector(3 downto 0);
+	-- Other signals
+	signal instr_ready_s : std_logic;
+	signal data_ready_s : std_logic;
+	signal fencei_s : std_logic;
+
+
+	-- NOTE Just for test bench, to simulate real memory, additional signals needed
+	signal addr_phy_s 		: std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+	signal dread_phy_s 	: std_logic_vector(31 downto 0);
+	signal dwrite_phy_s		: std_logic_vector(31 downto 0);
+	signal we_phy_s			: std_logic_vector(3 downto 0);
 
 begin
 
@@ -81,20 +73,16 @@ begin
 	addr_data_cache_s <= addr_data_cache_32_s((PHY_ADDR_WIDTH-1) downto 0);
 	addr_instr_cache_s <= addr_instr_cache_32_s((PHY_ADDR_WIDTH-1) downto 0);
 
-	--********** Cache controller **************
+	--********** Memory subsystem **************
+	-- 2 levels of caches + required controllers
 	cc_nway: entity work.cache_contr_nway_vnv(behavioral)
-		generic map (
-			BLOCK_SIZE => BLOCK_SIZE,
-			LVL1_CACHE_SIZE => LVL1_CACHE_SIZE,
-			LVL2_CACHE_SIZE => LVL2_CACHE_SIZE
-		)
 		port map(
 			clk => clk,
 			reset => reset,
 			data_ready_o => data_ready_s,
 			instr_ready_o => instr_ready_s,
 			fencei_i => fencei_s,
-		-- NOTE Just for test bench, to simulate real memory
+			-- NOTE Just for test bench, to simulate real memory
 			addr_phy_o => addr_phy_s,
 			dread_phy_i => dread_phy_s,
 			dwrite_phy_o => dwrite_phy_s,
@@ -102,8 +90,6 @@ begin
 			-- Instruction cache
 			addr_instr_i => addr_instr_cache_s,
 			dread_instr_o => dread_instr_cache_s,
-			--rst_instr_cache_i => rst_instr_cache_s,
-			--en_instr_cache_i => en_instr_cache_s,
 			-- Data cache
 			addr_data_i => addr_data_cache_s,
 			dread_data_o => dread_data_cache_s,
@@ -113,8 +99,8 @@ begin
 		);
 
 --	Dummy ports so Vivado wouldn't "optimize" the entire design for now
-	dread_instr <= dread_instr_cache_s;
-	dread_data <= dread_data_cache_s;
+	--dread_instr <= dread_instr_cache_s;
+	--dread_data <= dread_data_cache_s;
 
 -- Physical memory interface
 	addr_phy_o <= addr_phy_s;

@@ -89,7 +89,6 @@ attribute ram_style of ram_array : signal is "distributed";
 
 begin
 
-
 	process(clk)
 	begin
 		 if(clk'event and clk = '1') then

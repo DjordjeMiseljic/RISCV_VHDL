@@ -92,11 +92,11 @@ begin
 		 if(clk'event and clk = '1') then
 			  if(ena = '1') then
 				  -- Lines marked with + are added by user to the Xilinx template
-					if(rsta = '0')then -- +
-						ram_data_a <= ram_array(to_integer(unsigned(addra)));
-					else -- +
-						ram_data_a <= (others => '0'); -- +
-					end if; -- +
+					--if(rsta = '0')then -- +
+					ram_data_a <= ram_array(to_integer(unsigned(addra)));
+					--else -- +
+						--ram_data_a <= (others => '0'); -- +
+					--end if; -- +
 					for i in 0 to C_NB_COL-1 loop
 						 if(wea(i) = '1') then
 							  ram_array(to_integer(unsigned(addra)))((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH) <= dina((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH);
