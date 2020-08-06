@@ -9,9 +9,9 @@ entity RISCV_w_cache is
 			reset : in std_logic;
 			-- NOTE Just for test bench, to simulate real memory
 			addr_phy_o 		: out std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
-			dread_phy_i 		: in std_logic_vector(31 downto 0);
-			dwrite_phy_o		: out std_logic_vector(31 downto 0);
-         we_phy_o			: out std_logic_vector(3 downto 0)
+			dread_phy_i 	: in std_logic_vector(31 downto 0);
+			dwrite_phy_o	: out std_logic_vector(31 downto 0);
+         we_phy_o			: out std_logic
 			);
 end entity;
 
@@ -42,7 +42,7 @@ architecture Behavioral of RISCV_w_cache is
 	signal addr_phy_s 		: std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
 	signal dread_phy_s 	: std_logic_vector(31 downto 0);
 	signal dwrite_phy_s		: std_logic_vector(31 downto 0);
-	signal we_phy_s			: std_logic_vector(3 downto 0);
+	signal we_phy_s			: std_logic;
 
 begin
 

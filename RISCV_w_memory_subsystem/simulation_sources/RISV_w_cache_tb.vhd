@@ -3,7 +3,7 @@
 -- Filename			: tb_RISCV_w_cache.vhd
 -- Author			: ChenYong
 -- Created On		: 2020-06-22 17:47
--- Last Modified	: 2020-08-06 04:35
+-- Last Modified	: 2020-08-06 16:57
 -- Version			: v1.0
 -- Description		: 
 --						
@@ -29,7 +29,7 @@ architecture behavior of tb_RISCV_w_cache is
 		addr_phy_o		: out	std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
 		dread_phy_i		: in	std_logic_vector(31 downto 0);
 		dwrite_phy_o	: out	std_logic_vector(31 downto 0);
-		we_phy_o		: out	std_logic_vector(3 downto 0)
+		we_phy_o		: out	std_logic
 	);
 	end component;
 	    
@@ -45,7 +45,7 @@ architecture behavior of tb_RISCV_w_cache is
     signal	addr_phy_short_s: std_logic_vector(PHY_ADDR_WIDTH-C_SHRINK_ADDR_WIDTH-3 downto 0);
 
 	signal	dwrite_phy_s	: std_logic_vector(31 downto 0);
-	signal	we_phy_s		: std_logic_vector(3 downto 0);
+	signal	we_phy_s		: std_logic;
 	signal	dread_phy_s		: std_logic_vector(31 downto 0);
 	signal	en_phy_s		: std_logic;
 	signal	regce_phy_s		: std_logic;
@@ -83,10 +83,9 @@ begin
 	rst_phy_s <= '0';
 	en_phy_s <= '1';
 	regce_phy_s <= '1';
-	physical_memory : entity work.RAM_sp_rf_bw(rtl)
+	physical_memory : entity work.RAM_sp_rf(rtl)
 		generic map (
-				NB_COL => 4,
-				COL_WIDTH => 8,
+				RAM_WIDTH => C_COL_WIDTH*C_NUM_COL,
 				RAM_DEPTH => ((2**(PHY_ADDR_WIDTH-C_SHRINK_ADDR_WIDTH))/4), -- -2 to address 4 bytes in a word
 				RAM_PERFORMANCE => "LOW_LATENCY",
 				INIT_FILE => "/home/fouste/Uni/RISCV_VHDL/RV32I/simulation_sources/assembly_code.txt" 
