@@ -1,13 +1,3 @@
-
---  Xilinx True Dual Port RAM Byte Write Read First Single Clock
---  This code implements a parameterizable true dual port memory (both ports can read and write).
---  The behavior of this RAM is when data is written, the prior memory contents at the write
---  address are presented on the output port.  If the output data is
---  not needed during writes or the last read value is desired to be retained,
---  it is suggested to use a no change RAM as it is more power efficient.
---  If a reset or enable is not necessary, it may be tied off or removed from the code.
---  Modify the parameters for the desired RAM characteristics.
-
 library ieee;
 library work;
 use ieee.std_logic_1164.all;
@@ -21,7 +11,7 @@ generic (
     COL_WIDTH : integer := 8;                       -- Specify column width (byte width, typically 8 or 9)
     RAM_DEPTH : integer := 32;                    -- Specify RAM depth (number of entries)
     RAM_PERFORMANCE : string := "LOW_LATENCY";      -- Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
-    INIT_FILE : string := "assembly_code.txt"            -- Specify name/location of RAM initialization file if using one (leave blank if not)
+    INIT_FILE : string := ""            -- Specify name/location of RAM initialization file if using one (leave blank if not)
     );
 
 port (
@@ -73,15 +63,12 @@ end function;
 
 impure function init_from_file_or_zeroes(ramfile : string) return ram_type is
 begin
-    if ramfile = "assembly_code.txt" then
-        return InitRamFromFile("/home/fouste/Uni/RISCV_VHDL/RV32I/simulation_sources/assembly_code.txt") ;
-    else
+    if ramfile = "" then
         return (others => (others => '0'));
+    else
+        return InitRamFromFile(ramfile);
     end if;
 end;
-
-
-
 
 -- Following code defines RAM
 signal ram_array : ram_type := init_from_file_or_zeroes(C_INIT_FILE);
@@ -89,50 +76,46 @@ attribute ram_style : string;
 attribute ram_style of ram_array : signal is "distributed";
 
 
-
-
-
 begin
 
-process(clk)
-begin
-    if(clk'event and clk = '1') then
-        if(ena = '1') then
-            for i in 0 to C_NB_COL-1 loop
-                if(wea(i) = '1') then
-                    ram_array(to_integer(unsigned(addra)))((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH) <= dina((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH);
-                end if;
-            end loop;
-        end if;
-    end if;
-end process;
+	lutram_proc: process(clk)
+	begin
+		 if(clk'event and clk = '1') then
+			  if(ena = '1') then
+					for i in 0 to C_NB_COL-1 loop
+						 if(wea(i) = '1') then
+							  ram_array(to_integer(unsigned(addra)))((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH) <=
+							  		dina((i+1)*C_COL_WIDTH-1 downto i*C_COL_WIDTH);
+						 end if;
+					end loop;
+			  end if;
+		 end if;
+	end process;
 
-ram_data_a <= ram_array(to_integer(unsigned(addra)));
+	ram_data_a <= ram_array(to_integer(unsigned(addra)));
 
---  Following code generates LOW_LATENCY (no output register)
---  Following is a 1 clock cycle read latency at the cost of a longer clock-to-out timing
+	--  Following code generates LOW_LATENCY (no output register)
+	--  Following is a async read at the cost of a longer adress-to-out timing
+	no_output_register : if C_RAM_PERFORMANCE = "LOW_LATENCY" generate
+		 douta <= ram_data_a;
+	end generate;
 
-no_output_register : if C_RAM_PERFORMANCE = "LOW_LATENCY" generate
-    douta <= ram_data_a;
-end generate;
+	--  Following code generates HIGH_PERFORMANCE (use output register)
+	--  Following is a 1 clock cycle read latency with improved clock-to-out timing
+	output_register : if C_RAM_PERFORMANCE = "HIGH_PERFORMANCE"  generate
+	process(clk)
+	begin
+		 if(clk'event and clk = '1') then
+			  if(rsta = '1') then
+					douta_reg <= (others => '0');
+			  elsif(regcea = '1') then
+					douta_reg <= ram_data_a;
+			  end if;
+		 end if;
+	end process;
+	douta <= douta_reg;
 
---  Following code generates HIGH_PERFORMANCE (use output register)
---  Following is a 2 clock cycle read latency with improved clock-to-out timing
-
-output_register : if C_RAM_PERFORMANCE = "HIGH_PERFORMANCE"  generate
-process(clk)
-begin
-    if(clk'event and clk = '1') then
-        if(rsta = '1') then
-            douta_reg <= (others => '0');
-        elsif(regcea = '1') then
-            douta_reg <= ram_data_a;
-        end if;
-    end if;
-end process;
-douta <= douta_reg;
-
-end generate;
+	end generate;
 end rtl;
 
 

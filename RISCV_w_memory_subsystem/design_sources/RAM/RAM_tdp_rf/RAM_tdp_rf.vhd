@@ -81,10 +81,10 @@ end function;
 
 impure function init_from_file_or_zeroes(ramfile : string) return ram_type is
 begin
-    if ramfile = "assembly_code.txt" then
-        return InitRamFromFile("/home/fouste/Uni/RISCV_VHDL/RV32I/simulation_sources/assembly_code.txt") ;
-    else
+    if ramfile = "" then
         return (others => (others => '0'));
+    else
+        return InitRamFromFile(ramfile) ;
     end if;
 end;
 
@@ -97,26 +97,26 @@ begin
 
 process(clk)
 begin
-    if(clk'event and clk = '1') then
-        if(ena = '1') then
-		ram_data_a <= ram_array_v(to_integer(unsigned(addra)));
-            if(wea = '1') then
-                 ram_array_v(to_integer(unsigned(addra))) := dina;
-            end if;
-        end if;
-    end if;
+	if(clk'event and clk = '1') then
+		if(ena = '1') then
+			ram_data_a <= ram_array_v(to_integer(unsigned(addra)));
+			if(wea = '1') then
+				ram_array_v(to_integer(unsigned(addra))) := dina;
+			end if;
+		end if;
+	end if;
 end process;
 
 process(clk)
 begin
-    if(clk'event and clk = '1') then
-        if(enb = '1') then	  
-		ram_data_b <= ram_array_v(to_integer(unsigned(addrb)));
-                if(web = '1') then
-                    ram_array_v(to_integer(unsigned(addrb))):= dinb;
-                end if;
-        end if;
-    end if;
+	if(clk'event and clk = '1') then
+		if(enb = '1') then	  
+			ram_data_b <= ram_array_v(to_integer(unsigned(addrb)));
+			if(web = '1') then
+				ram_array_v(to_integer(unsigned(addrb))):= dinb;
+			end if;
+		end if;
+	end if;
 end process;
 
 --  Following code generates LOW_LATENCY (no output register)

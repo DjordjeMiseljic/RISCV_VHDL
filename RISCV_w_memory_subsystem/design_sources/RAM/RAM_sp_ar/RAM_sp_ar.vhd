@@ -49,10 +49,10 @@ end function;
 
 impure function init_from_file_or_zeroes(ramfile : string) return ram_type is
 begin
-    if ramfile = "RAM_INIT.dat" then
-        return InitRamFromFile("RAM_INIT.dat") ;
-    else
+    if ramfile = "" then
         return (others => (others => '0'));
+    else
+        return InitRamFromFile(ramfile);
     end if;
 end;
 -- Following code defines RAM
@@ -61,7 +61,7 @@ attribute ram_style : string;
 attribute ram_style of ram_s : signal is "distributed";
 begin
 
-process(clk)
+lutram_proc: process(clk)
 begin
     if(clk'event and clk = '1') then
         if(ena = '1') then
@@ -71,7 +71,6 @@ begin
         end if;
     end if;
 end process;
-
 
 douta <= ram_s(to_integer(unsigned(addra)));
 

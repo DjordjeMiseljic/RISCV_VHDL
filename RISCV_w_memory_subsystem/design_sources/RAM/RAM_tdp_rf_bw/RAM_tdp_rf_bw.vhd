@@ -82,10 +82,10 @@ end function;
 
 impure function init_from_file_or_zeroes(ramfile : string) return ram_type is
 begin
-    if ramfile = "assembly_code.txt" then
-        return InitRamFromFile("/home/fouste/Uni/RISCV_VHDL/RV32I/simulation_sources/assembly_code.txt") ;
-    else
+    if ramfile = "" then
         return (others => (others => '0'));
+    else
+        return InitRamFromFile(ramfile) ;
     end if;
 end;
 

@@ -21,7 +21,7 @@ generic (
     RAM_WIDTH : integer := 32;                       
     RAM_DEPTH : integer := 1024;                    -- Specify RAM depth (number of entries)
     RAM_PERFORMANCE : string := "LOW_LATENCY";      -- Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
-    INIT_FILE : string := "assembly_code.txt"            -- Specify name/location of RAM initialization file if using one (leave blank if not)
+    INIT_FILE : string := ""            -- Specify name/location of RAM initialization file if using one (leave blank if not)
     );
 
 port (
@@ -73,15 +73,12 @@ end function;
 
 impure function init_from_file_or_zeroes(ramfile : string) return ram_type is
 begin
-    if ramfile = "assembly_code.txt" then
-        return InitRamFromFile("/home/fouste/Uni/RISCV_VHDL/RV32I/simulation_sources/assembly_code.txt") ;
-    else
+    if ramfile = "" then
         return (others => (others => '0'));
+    else
+        return InitRamFromFile(ramfile);
     end if;
 end;
-
-
-
 
 -- Following code defines RAM
 signal ram_array : ram_type := init_from_file_or_zeroes(C_INIT_FILE);
@@ -93,44 +90,44 @@ attribute ram_style of ram_array : signal is "distributed";
 begin
 
 
-process(clk)
-begin
-    if(clk'event and clk = '1') then
-        if(ena = '1') then
-            if(wea = '1') then
-                ram_array(to_integer(unsigned(addra))) <= dina;
-                ram_data_a <= dina;
-            else
-                ram_data_a <= ram_array(to_integer(unsigned(addra)));
-            end if;
-        end if;
-    end if;
-end process;
+	process(clk)
+	begin
+		 if(clk'event and clk = '1') then
+			  if(ena = '1') then
+					if(wea = '1') then
+						 ram_array(to_integer(unsigned(addra))) <= dina;
+						 ram_data_a <= dina;
+					else
+						 ram_data_a <= ram_array(to_integer(unsigned(addra)));
+					end if;
+			  end if;
+		 end if;
+	end process;
 
---  Following code generates LOW_LATENCY (no output register)
---  Following is a 1 clock cycle read latency at the cost of a longer clock-to-out timing
+	--  Following code generates LOW_LATENCY (no output register)
+	--  Following is a 1 clock cycle read latency at the cost of a longer clock-to-out timing
 
-no_output_register : if C_RAM_PERFORMANCE = "LOW_LATENCY" generate
-    douta <= ram_data_a;
-end generate;
+	no_output_register : if C_RAM_PERFORMANCE = "LOW_LATENCY" generate
+		 douta <= ram_data_a;
+	end generate;
 
---  Following code generates HIGH_PERFORMANCE (use output register)
---  Following is a 2 clock cycle read latency with improved clock-to-out timing
+	--  Following code generates HIGH_PERFORMANCE (use output register)
+	--  Following is a 2 clock cycle read latency with improved clock-to-out timing
 
-output_register : if C_RAM_PERFORMANCE = "HIGH_PERFORMANCE"  generate
-process(clk)
-begin
-    if(clk'event and clk = '1') then
-        if(rsta = '1') then
-            douta_reg <= (others => '0');
-        elsif(regcea = '1') then
-            douta_reg <= ram_data_a;
-        end if;
-    end if;
-end process;
-douta <= douta_reg;
+	output_register : if C_RAM_PERFORMANCE = "HIGH_PERFORMANCE"  generate
+	process(clk)
+	begin
+		 if(clk'event and clk = '1') then
+			  if(rsta = '1') then
+					douta_reg <= (others => '0');
+			  elsif(regcea = '1') then
+					douta_reg <= ram_data_a;
+			  end if;
+		 end if;
+	end process;
+	douta <= douta_reg;
 
-end generate;
+	end generate;
 end rtl;
 
 

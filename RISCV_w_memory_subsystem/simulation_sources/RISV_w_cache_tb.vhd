@@ -94,7 +94,7 @@ begin
 				COL_WIDTH => 8,
 				RAM_DEPTH => ((2**(PHY_ADDR_WIDTH-C_SHRINK_ADDR_WIDTH))/4), -- -2 to address 4 bytes in a word
 				RAM_PERFORMANCE => "LOW_LATENCY",
-				INIT_FILE => "assembly_code.txt" 
+				INIT_FILE => "/home/fouste/Uni/RISCV_VHDL/RV32I/simulation_sources/assembly_code.txt" 
 		)
 		port map  (
 				clk   => clk,
