@@ -20,14 +20,14 @@ architecture Behavioral of RISCV_w_cache is
    -- Instruction cache signals
 	signal addr_instr_cache_s : std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
 	signal addr_instr_cache_32_s : std_logic_vector(31 downto 0);
-	signal dread_instr_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
+	signal dread_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
 
 	-- Data cache signals
 	signal addr_data_cache_s : std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
 	signal addr_data_cache_32_s : std_logic_vector(31 downto 0);
-	signal dwrite_data_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
-	signal dread_data_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0); 
-	signal we_data_cache_s : std_logic_vector(LVL1C_NUM_COL-1 downto 0);
+	signal dwrite_data_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
+	signal dread_data_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0); 
+	signal we_data_cache_s : std_logic_vector(C_NUM_COL-1 downto 0);
 	signal en_data_cache_s : std_logic;
 	signal rst_data_cache_s : std_logic;
 	signal re_data_cache_s : std_logic; 

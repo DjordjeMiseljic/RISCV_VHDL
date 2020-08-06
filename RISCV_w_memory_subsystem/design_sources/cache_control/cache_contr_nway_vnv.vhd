@@ -36,12 +36,10 @@ architecture Behavioral of cache_contr_nway_vnv is
 	-- Level 1 cache signals
 	-- Instruction cache signals
 	signal addra_instr_cache_s : std_logic_vector((LVL1C_ADDR_WIDTH-3) downto 0); --(-2 bits because byte in 32-bit word is not adressible) 
-	signal dwritea_instr_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
-	signal dreada_instr_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
-	signal wea_instr_cache_s : std_logic_vector(LVL1C_NUM_COL-1 downto 0);
+	signal dwritea_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
+	signal dreada_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
+	signal wea_instr_cache_s : std_logic;
 	signal ena_instr_cache_s : std_logic;
-	signal rsta_instr_cache_s : std_logic;
-	signal regcea_instr_cache_s : std_logic;
 	-- Instruction cache tag store singals
 	signal dwritea_instr_tag_s : std_logic_vector(LVL1C_TAG_WIDTH-1 downto 0);
 	signal dreada_instr_tag_s : std_logic_vector(LVL1C_TAG_WIDTH-1 downto 0);
@@ -51,9 +49,9 @@ architecture Behavioral of cache_contr_nway_vnv is
 	-- Data cache signals
 	signal clk_data_cache_s : std_logic;
 	signal addra_data_cache_s : std_logic_vector((LVL1C_ADDR_WIDTH-3) downto 0); --(-2 bits because byte in 32-bit word is not adressible)
-	signal dwritea_data_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
-	signal dreada_data_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0); 
-	signal wea_data_cache_s : std_logic_vector(LVL1C_NUM_COL-1 downto 0);
+	signal dwritea_data_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
+	signal dreada_data_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0); 
+	signal wea_data_cache_s : std_logic_vector(C_NUM_COL-1 downto 0);
 	signal ena_data_cache_s : std_logic; 
 	signal rsta_data_cache_s : std_logic; 
 	signal regcea_data_cache_s : std_logic;
@@ -68,8 +66,8 @@ architecture Behavioral of cache_contr_nway_vnv is
 	-- Level 2 cache signals
 	-- type definitions
 	type lvl2_addr_c_t is array (0 to LVL2C_ASSOCIATIVITY-1) of std_logic_vector((LVL2C_ADDR_WIDTH-3) downto 0); 
-	type lvl2_data_c_t is array (0 to LVL2C_ASSOCIATIVITY-1) of std_logic_vector(LVL2C_NUM_COL*LVL2C_COL_WIDTH-1 downto 0);
-	type lvl2_we_c_t is array (0 to LVL2C_ASSOCIATIVITY-1) of std_logic_vector(LVL2C_NUM_COL-1 downto 0);
+	type lvl2_data_c_t is array (0 to LVL2C_ASSOCIATIVITY-1) of std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
+	type lvl2_we_c_t is array (0 to LVL2C_ASSOCIATIVITY-1) of std_logic;
 	type lvl2_addr_ts_t is array (0 to LVL2C_ASSOCIATIVITY-1) of std_logic_vector(clogb2(LVL2C_NB_BLOCKS)-1 downto 0);
 	type lvl2_data_ts_t is array (0 to LVL2C_ASSOCIATIVITY-1) of std_logic_vector(LVL2C_TAG_WIDTH+LVL2C_BKK_WIDTH+LVL2C_NWAY_BKK_WIDTH-1 downto 0);
 	type lvl2_we_ts_t is array (0 to LVL2C_ASSOCIATIVITY-1) of std_logic;
@@ -492,7 +490,7 @@ begin
 		wea_instr_tag_s <= '0';
 		addra_instr_tag_s <= lvl1i_c_idx_s;
 		dwritea_instr_tag_s <= (others => '0');
-		wea_instr_cache_s <= (others => '0');
+		wea_instr_cache_s <= '0';
 		addra_instr_cache_s <= lvl1i_c_addr_s((LVL1C_ADDR_WIDTH-1) downto 2);
 		dwritea_instr_cache_s <= (others => '0');
 		dread_instr_o <= dreada_instr_cache_s;
@@ -508,7 +506,7 @@ begin
 		addra_lvl2_tag_s <= lvl2da_c_idx_s;
 		for i in 0 to (LVL2C_ASSOCIATIVITY-1) loop
 			addra_lvl2_cache_s(i) <= lvl2ia_c_addr_s((LVL2C_ADDR_WIDTH-1) downto 2);
-			wea_lvl2_cache_s(i) <= (others => '0');
+			wea_lvl2_cache_s(i) <= '0';
 			dwritea_lvl2_cache_s(i) <= (others => '0'); 
 			wea_lvl2_tag_s(i) <= '0';
 			dwritea_lvl2_tag_s(i) <= (others => '0'); 
@@ -613,7 +611,7 @@ begin
 				addra_lvl2_cache_s(lvl2_hit_index) <= lvl2ia_c_idx_s & cc_counter_incr;
 				addra_instr_cache_s <= lvl1i_c_idx_s & cc_counter_reg;
 				dwritea_instr_cache_s <= dreada_lvl2_cache_s(lvl2_hit_index);
-				wea_instr_cache_s <= "1111";
+				wea_instr_cache_s <= '1';
 
 				cc_counter_next <= cc_counter_incr;
 
@@ -677,7 +675,7 @@ begin
 				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
 
 				dwritea_lvl2_cache_s(lvl2_hit_index) <= dreada_data_cache_s;
-				wea_lvl2_cache_s(lvl2_hit_index)<= "1111";
+				wea_lvl2_cache_s(lvl2_hit_index)<= '1';
 
 				cc_counter_next <= cc_counter_incr;
 
@@ -703,7 +701,7 @@ begin
 				addra_lvl2_tag_s <= lvl2dl_c_idx_s;
 
 				dwritea_lvl2_cache_s(lvl2_dflush_index) <= dreada_data_cache_s;
-				wea_lvl2_cache_s(lvl2_dflush_index)<= "1111";
+				wea_lvl2_cache_s(lvl2_dflush_index)<= '1';
 
 				cc_counter_next <= cc_counter_incr;
 
@@ -826,7 +824,7 @@ begin
 		-- LVL 2 signals ports B
 		for i in 0 to (LVL2C_ASSOCIATIVITY-1) loop
 			addrb_lvl2_cache_s(i) <= (others => '0');
-			web_lvl2_cache_s(i) <= (others => '0');
+			web_lvl2_cache_s(i) <= '0';
 			dwriteb_lvl2_cache_s(i) <= (others => '0'); 
 			web_lvl2_tag_s(i) <= '0';
 			dwriteb_lvl2_tag_s(i) <= (others => '0'); 
@@ -894,7 +892,7 @@ begin
 				addr_phy_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & mc_counter_incr & "00";
 				addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_reg;
 				dwriteb_lvl2_cache_s(lvl2_victim_index) <= dread_phy_i;
-				web_lvl2_cache_s(lvl2_victim_index) <= "1111";
+				web_lvl2_cache_s(lvl2_victim_index) <= '1';
 
 				mc_counter_next <= mc_counter_incr;
 
@@ -934,27 +932,21 @@ begin
 
 	--********** LEVEL 1 CACHES  **************
 	-- INSTRUCTION CACHE
-	regcea_instr_cache_s <= '0';
 	ena_instr_cache_s <= '1';
-	rsta_instr_cache_s <= '0';
 	-- Instantiation of instruction cache
-	instruction_cache : entity work.RAM_sp_ar_bw(rtl)
+	instruction_cache : entity work.RAM_sp_ar(rtl)
 		generic map (
-			NB_COL => LVL1C_NUM_COL,
-			COL_WIDTH => LVL1C_COL_WIDTH,
+			RAM_WIDTH => C_NUM_COL*C_COL_WIDTH,
 			RAM_DEPTH => LVL1C_DEPTH,
-			RAM_PERFORMANCE => "LOW_LATENCY",
 			INIT_FILE => "" 
 		)
 		port map  (
 			clk   => clk,
 			addra  => addra_instr_cache_s,
 			dina   => dwritea_instr_cache_s,
-			wea    => wea_instr_cache_s,
 			ena    => ena_instr_cache_s,
-			rsta   => rsta_instr_cache_s,
-			regcea => regcea_instr_cache_s,
-			douta  => dreada_instr_cache_s
+			douta  => dreada_instr_cache_s,
+			wea    => wea_instr_cache_s
 		);
 	-- TAG STORE FOR INSTRUCTION CACHE
 	-- TODO @ system boot this entire memory needs to be set to 0
@@ -965,7 +957,8 @@ begin
 	instruction_tag_store: entity work.ram_sp_ar(rtl)
 		generic map (
 			RAM_WIDTH => LVL1C_TAG_WIDTH,
-			RAM_DEPTH => LVL1C_NB_BLOCKS
+			RAM_DEPTH => LVL1C_NB_BLOCKS,
+			INIT_FILE => "" 
 		)
 		port map(
 			clk => clk,
@@ -985,8 +978,8 @@ begin
 	-- Instantiation of data cache
 	data_cache : entity work.RAM_sp_ar_bw(rtl)
 		generic map (
-				NB_COL => LVL1C_NUM_COL,
-				COL_WIDTH => LVL1C_COL_WIDTH,
+				NB_COL => C_NUM_COL,
+				COL_WIDTH => C_COL_WIDTH,
 				RAM_DEPTH => LVL1C_DEPTH,
 				RAM_PERFORMANCE => "LOW_LATENCY",
 				INIT_FILE => "" 
@@ -1010,7 +1003,8 @@ begin
 	data_tag_store: entity work.ram_sp_ar(rtl)
 		generic map (
 			RAM_WIDTH => LVL1C_TAG_WIDTH + LVL1DC_BKK_WIDTH,
-			RAM_DEPTH => LVL1C_NB_BLOCKS
+			RAM_DEPTH => LVL1C_NB_BLOCKS,
+			INIT_FILE => "" 
 		)
 		port map(
 			clk => clk,
@@ -1032,10 +1026,9 @@ begin
 	-- Instantiation of level 2 caches
 	lvl2_cache_generate:
 	for i in 0 to LVL2C_ASSOCIATIVITY-1 generate
-		level_2_cache : entity work.RAM_tdp_rf_bw(rtl)
+		level_2_cache : entity work.RAM_tdp_rf(rtl)
 			generic map (
-				NB_COL => LVL2C_NUM_COL,
-				COL_WIDTH => LVL2C_COL_WIDTH,
+				RAM_WIDTH => C_NUM_COL*C_COL_WIDTH,
 				RAM_DEPTH => LVL2C_DEPTH,
 				RAM_PERFORMANCE => "LOW_LATENCY",
 				INIT_FILE => "" 

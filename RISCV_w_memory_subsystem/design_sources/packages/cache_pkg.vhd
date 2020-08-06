@@ -14,6 +14,8 @@ package cache_pkg is
 	-- Number of bits needed to address all bytes inside the block
 		constant BLOCK_ADDR_WIDTH : integer := clogb2(BLOCK_SIZE);
 
+		constant C_NUM_COL : integer := 4; -- fixed, word is 4 bytes
+		constant C_COL_WIDTH : integer := 8; -- fixed, byte is 8 bits
 	-- Basic Level 1 cache parameters:
 	-- This will be size of both instruction and data caches in bytes
 		constant LVL1_CACHE_SIZE : integer := 1024; 
@@ -22,8 +24,6 @@ package cache_pkg is
 		constant LVL1C_NB_BLOCKS : integer := LVL1_CACHE_SIZE/BLOCK_SIZE; 
 	-- Cache depth is size in bytes divided by word size in bytes
 		constant LVL1C_DEPTH : integer := LVL1_CACHE_SIZE/4; 
-		constant LVL1C_NUM_COL : integer := 4; -- fixed, word is 4 bytes
-		constant LVL1C_COL_WIDTH : integer := 8; -- fixed, byte is 8 bits
 	-- Number of bits needed to address all bytes inside the cache
 		constant LVL1C_ADDR_WIDTH : integer := clogb2(LVL1_CACHE_SIZE);
 	-- Number of bits needed to address all blocks inside the cache
@@ -41,8 +41,6 @@ package cache_pkg is
 		constant LVL2C_NB_BLOCKS : integer := LVL2_CACHE_SIZE/BLOCK_SIZE; 
 	-- Cache depth is size in bytes divided by word size in bytes
 		constant LVL2C_DEPTH : integer := LVL2_CACHE_SIZE/4; 
-		constant LVL2C_NUM_COL : integer := 4; -- fixed, word is 4 bytes
-		constant LVL2C_COL_WIDTH : integer := 8; -- fixed, byte is 8 bits
 	-- Number of bits needed to address all bytes inside the cache
 		constant LVL2C_ADDR_WIDTH : integer := clogb2(LVL2_CACHE_SIZE);
 	-- Number of bits needed to address all blocks inside the cache

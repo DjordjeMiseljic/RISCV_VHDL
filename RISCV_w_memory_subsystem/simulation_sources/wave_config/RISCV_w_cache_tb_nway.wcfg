@@ -13,14 +13,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="1275006fs"></ZoomEndTime>
-      <Cursor1Time time="1000000fs"></Cursor1Time>
+      <ZoomEndTime time="1498854fs"></ZoomEndTime>
+      <Cursor1Time time="645003fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
-      <NameColumnWidth column_width="211"></NameColumnWidth>
+      <NameColumnWidth column_width="207"></NameColumnWidth>
       <ValueColumnWidth column_width="66"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="204" />
+   <WVObjectSize size="203" />
    <wave_markers>
       <marker label="" time="4900000" />
       <marker label="" time="6590000" />
@@ -357,13 +357,6 @@
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="BkColor">#FFFF00</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_cache/ram_array">
-      <obj_property name="ElementShortName">ram_array[0:255][31:0]</obj_property>
-      <obj_property name="ObjectShortName">ram_array[0:255][31:0]</obj_property>
-      <obj_property name="CustomSignalColor">#F0E68C</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
-   </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_cache/addra">
       <obj_property name="ElementShortName">addra[7:0]</obj_property>
       <obj_property name="ObjectShortName">addra[7:0]</obj_property>
@@ -378,12 +371,9 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_cache/wea">
-      <obj_property name="ElementShortName">wea[3:0]</obj_property>
-      <obj_property name="ObjectShortName">wea[3:0]</obj_property>
-      <obj_property name="CustomSignalColor">#F0E68C</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_cache/wea">
+      <obj_property name="ElementShortName">wea</obj_property>
+      <obj_property name="ObjectShortName">wea</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/instruction_cache/douta">
       <obj_property name="ElementShortName">douta[31:0]</obj_property>
@@ -764,12 +754,9 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/wea">
-      <obj_property name="ElementShortName">wea[3:0]</obj_property>
-      <obj_property name="ObjectShortName">wea[3:0]</obj_property>
-      <obj_property name="CustomSignalColor">#00FF7F</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/wea">
+      <obj_property name="ElementShortName">wea</obj_property>
+      <obj_property name="ObjectShortName">wea</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/douta">
       <obj_property name="ElementShortName">douta[31:0]</obj_property>
@@ -797,12 +784,9 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">HEXRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/web">
-      <obj_property name="ElementShortName">web[3:0]</obj_property>
-      <obj_property name="ObjectShortName">web[3:0]</obj_property>
-      <obj_property name="CustomSignalColor">#00FF00</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/web">
+      <obj_property name="ElementShortName">web</obj_property>
+      <obj_property name="ObjectShortName">web</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(0)\/level_2_cache/doutb">
       <obj_property name="ElementShortName">doutb[31:0]</obj_property>
@@ -835,12 +819,9 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/wea">
-      <obj_property name="ElementShortName">wea[3:0]</obj_property>
-      <obj_property name="ObjectShortName">wea[3:0]</obj_property>
-      <obj_property name="CustomSignalColor">#008000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/wea">
+      <obj_property name="ElementShortName">wea</obj_property>
+      <obj_property name="ObjectShortName">wea</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/douta">
       <obj_property name="ElementShortName">douta[31:0]</obj_property>
@@ -868,12 +849,9 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/web">
-      <obj_property name="ElementShortName">web[3:0]</obj_property>
-      <obj_property name="ObjectShortName">web[3:0]</obj_property>
-      <obj_property name="CustomSignalColor">#008000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/web">
+      <obj_property name="ElementShortName">web</obj_property>
+      <obj_property name="ObjectShortName">web</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(1)\/level_2_cache/doutb">
       <obj_property name="ElementShortName">doutb[31:0]</obj_property>
@@ -906,12 +884,9 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/wea">
-      <obj_property name="ElementShortName">wea[3:0]</obj_property>
-      <obj_property name="ObjectShortName">wea[3:0]</obj_property>
-      <obj_property name="CustomSignalColor">#00FF7F</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/wea">
+      <obj_property name="ElementShortName">wea</obj_property>
+      <obj_property name="ObjectShortName">wea</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/douta">
       <obj_property name="ElementShortName">douta[31:0]</obj_property>
@@ -939,12 +914,9 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/web">
-      <obj_property name="ElementShortName">web[3:0]</obj_property>
-      <obj_property name="ObjectShortName">web[3:0]</obj_property>
-      <obj_property name="CustomSignalColor">#00FF00</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/web">
+      <obj_property name="ElementShortName">web</obj_property>
+      <obj_property name="ObjectShortName">web</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(2)\/level_2_cache/doutb">
       <obj_property name="ElementShortName">doutb[31:0]</obj_property>
@@ -977,12 +949,9 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/wea">
-      <obj_property name="ElementShortName">wea[3:0]</obj_property>
-      <obj_property name="ObjectShortName">wea[3:0]</obj_property>
-      <obj_property name="CustomSignalColor">#008000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/wea">
+      <obj_property name="ElementShortName">wea</obj_property>
+      <obj_property name="ObjectShortName">wea</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/douta">
       <obj_property name="ElementShortName">douta[31:0]</obj_property>
@@ -1010,12 +979,9 @@
       <obj_property name="UseCustomSignalColor">true</obj_property>
       <obj_property name="Radix">UNSIGNEDDECRADIX</obj_property>
    </wvobject>
-   <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/web">
-      <obj_property name="ElementShortName">web[3:0]</obj_property>
-      <obj_property name="ObjectShortName">web[3:0]</obj_property>
-      <obj_property name="CustomSignalColor">#008000</obj_property>
-      <obj_property name="UseCustomSignalColor">true</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject type="logic" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/web">
+      <obj_property name="ElementShortName">web</obj_property>
+      <obj_property name="ObjectShortName">web</obj_property>
    </wvobject>
    <wvobject type="array" fp_name="/tb_RISCV_w_cache/RISCV_w_cache_inst/cc_nway/\lvl2_cache_generate(3)\/level_2_cache/doutb">
       <obj_property name="ElementShortName">doutb[31:0]</obj_property>
