@@ -176,7 +176,7 @@ architecture Behavioral of cache_contr_nway_vnv is
 	signal lvl2_nextv_map : std_logic_vector(LVL2C_ASSOCIATIVITY-1 downto 0);
 	signal lvl2_vnv_map : std_logic_vector(LVL2C_ASSOCIATIVITY-1 downto 0);
 
-	-- NOTE Signals - Design For Simulation : use only when debugging
+	-- NOTE Design For Simulation signals : use only when debugging, remove for release
 	-- They are not connected to anything and will probably be trimmed during synthesis
 	signal lvl2_d4s_valid_map : std_logic_vector(LVL2C_ASSOCIATIVITY-1 downto 0);
 	signal lvl2_d4s_dirty_map : std_logic_vector(LVL2C_ASSOCIATIVITY-1 downto 0);
@@ -262,7 +262,7 @@ begin
 	lvl1ia_ts_tag_s <= dreada_instr_tag_s(LVL1C_TAG_WIDTH-1 downto 0);
 
 	-- Process for extracting feilds for all N ways of lvl2 tag store
-	extract_lvl2_ts_fields: process (dreada_lvl2_tag_s,dreadb_lvl2_tag_s) is
+	extract_lvl2_ts_fields: process (dreada_lvl2_tag_s, dreadb_lvl2_tag_s) is
 	begin
 		for i in 0 to (LVL2C_ASSOCIATIVITY-1) loop
 			-- PORT A
@@ -468,13 +468,13 @@ begin
 	-- TODO check this: if processor never writes to instr cache, it doesn't need dirty bit
 	-- Cache controller
 	-- FSM that controls communication between lvl1 instruction/data caches and lvl2 shared cache
-	cc_fsm_proc : process(cc_state_reg, lvl1i_c_addr_s, lvl1d_c_addr_s, lvl2ia_c_tag_s, dreada_instr_cache_s, lvl1i_c_tag_s,
-		we_data_i, dwrite_data_i, dreada_data_cache_s, lvl1i_c_hit_s, lvl2ia_c_addr_s, lvl2a_c_hit_s,
-		lvl1d_c_hit_s, lvl1da_ts_bkk_s, lvl2da_c_idx_s, cc_counter_reg, cc_counter_incr, lvl2ia_c_idx_s, lvl1ia_ts_valid_reg,
-		lvl2a_ts_tag_s, lvl1i_c_idx_s, lvl2da_c_tag_s, lvl1d_c_idx_s, dreada_lvl2_cache_s,
-		lvl1d_c_tag_s, data_access_s, re_data_i, lvl1da_ts_tag_s, flush_lvl1d_s, invalidate_lvl1d_s, invalidate_lvl1i_s,
-		lvl2il_c_idx_s, lvl2_hit_index, lvl2a_ts_nbkk_s, lvl1ia_ts_tag_s, lvl2dl_c_idx_s, lvl2dl_c_tag_s, 
-		lvl2_nextv_index, lvl2_victim_index, lvl2_rando_index, lvl2_dflush_index,lvl2_iflush_index) is
+	cc_fsm_proc : process(cc_state_reg, cc_counter_reg, cc_counter_incr, we_data_i, re_data_i, data_access_s, dwrite_data_i, 
+		lvl1i_c_addr_s, lvl1i_c_idx_s, lvl1i_c_tag_s, lvl1i_c_hit_s, lvl1ia_ts_valid_reg, dreada_instr_cache_s,
+		lvl1d_c_addr_s, lvl1d_c_idx_s, lvl1d_c_tag_s, lvl1d_c_hit_s, lvl1da_ts_tag_s, lvl1da_ts_bkk_s, dreada_data_cache_s,
+		lvl2ia_c_idx_s, lvl2ia_c_tag_s, lvl2da_c_idx_s, lvl2da_c_tag_s, lvl2il_c_idx_s, lvl2dl_c_idx_s, lvl2dl_c_tag_s, 
+		lvl2a_c_hit_s, lvl2a_ts_tag_s, lvl2a_ts_bkk_s, lvl2a_ts_nbkk_s,  dreada_lvl2_cache_s, 
+		flush_lvl1d_s, invalidate_lvl1d_s, invalidate_lvl1i_s,
+		lvl2_hit_index, lvl2_nextv_index, lvl2_victim_index, lvl2_rando_index, lvl2_dflush_index, lvl2_iflush_index) is
 	begin
 		check_lvl2_s <= '0';
 		lvl1_valid_s <= '1';
@@ -504,7 +504,7 @@ begin
 		-- LVL2 cache and tag
 		addra_lvl2_tag_s <= lvl2da_c_idx_s;
 		for i in 0 to (LVL2C_ASSOCIATIVITY-1) loop
-			addra_lvl2_cache_s(i) <= lvl2ia_c_addr_s((LVL2C_ADDR_WIDTH-1) downto 2);
+			addra_lvl2_cache_s(i) <= (others => '0'); -- lvl2ia_c_addr_s((LVL2C_ADDR_WIDTH-1) downto 2);
 			wea_lvl2_cache_s(i) <= '0';
 			dwritea_lvl2_cache_s(i) <= (others => '0'); 
 			wea_lvl2_tag_s(i) <= '0';
@@ -812,10 +812,10 @@ begin
    
 	-- Memory controller
 	-- FSM that controls communication between lvl2 cache and main memory (DDR RAM)
-	mc_fsm_proc : process(mc_state_reg, mc_counter_reg, mc_counter_incr, dread_phy_i,
-									lvl2a_c_idx_s, lvl2a_c_tag_s, lvl2a_c_hit_s, lvl2a_ts_bkk_s, lvl2a_ts_tag_s,
-									check_lvl2_s, lvl2b_ts_tag_s, lvl2b_ts_bkk_s, dreadb_lvl2_cache_s, lvl2b_ts_nbkk_s,
-									lvl2_victim_index, lvl2_nextv_index, lvl2_rando_index, lvl2_invalid_found_s, lvl2_invalid_index) is
+	mc_fsm_proc : process(mc_state_reg, mc_counter_reg, mc_counter_incr, dread_phy_i, check_lvl2_s,
+								lvl2a_c_idx_s, lvl2a_c_tag_s, lvl2a_c_hit_s, lvl2a_ts_bkk_s, lvl2a_ts_tag_s,
+								lvl2b_ts_tag_s, lvl2b_ts_bkk_s, lvl2b_ts_nbkk_s, dreadb_lvl2_cache_s,
+								lvl2_victim_index, lvl2_nextv_index, lvl2_rando_index, lvl2_invalid_found_s, lvl2_invalid_index) is
 	begin
 		-- for FSM
 		mc_state_next <= idle;
