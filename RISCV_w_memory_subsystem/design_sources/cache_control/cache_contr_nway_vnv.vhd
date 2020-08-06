@@ -94,7 +94,7 @@ architecture Behavioral of cache_contr_nway_vnv is
 	signal addra_lvl2_tag_s : std_logic_vector(clogb2(LVL2C_NB_BLOCKS)-1 downto 0);
 	signal ena_lvl2_tag_s : std_logic;
 	signal rsta_lvl2_tag_s : std_logic;
-	signal wea_lvl2_tag_s : std_logic_vector(0 to LVL2C_ASSOCIATIVITY-1);
+	signal wea_lvl2_tag_s : lvl2_we_ts_t;
 	signal regcea_lvl2_tag_s : std_logic;
 	-- port B
 	signal dwriteb_lvl2_tag_s : lvl2_data_ts_t;
@@ -102,7 +102,7 @@ architecture Behavioral of cache_contr_nway_vnv is
 	signal addrb_lvl2_tag_s : std_logic_vector(clogb2(LVL2C_NB_BLOCKS)-1 downto 0);
 	signal enb_lvl2_tag_s : std_logic;
 	signal rstb_lvl2_tag_s : std_logic;
-	signal web_lvl2_tag_s : std_logic_vector(0 to LVL2C_ASSOCIATIVITY-1);
+	signal web_lvl2_tag_s : lvl2_we_ts_t;
 	signal regceb_lvl2_tag_s : std_logic;
 --*******************************************************************************************
 
@@ -153,13 +153,12 @@ architecture Behavioral of cache_contr_nway_vnv is
 	type lvl2_ts_nbkk_t is array (0 to LVL2C_ASSOCIATIVITY-1) of std_logic_vector(LVL2C_NWAY_BKK_WIDTH-1 downto 0);
 	-- port A
 	signal lvl2a_ts_tag_s : lvl2_ts_tag_t; -- stored tag
-	signal lvl2a_ts_bkk_s : lvl2_ts_bkk_t; -- book keeping, 4 bits : [Data,Instr,Dirty,Valid]
-	signal lvl2a_ts_nbkk_s : lvl2_ts_nbkk_t; -- nway book keeping, 2 bits : [Victim, NextVictim]
+	signal lvl2a_ts_bkk_s : lvl2_ts_bkk_t; -- bookkeeping, 4 bits : [Data,Instr,Dirty,Valid]
+	signal lvl2a_ts_nbkk_s : lvl2_ts_nbkk_t; -- nway bookkeeping, 2 bits : [Victim, NextVictim]
 	-- port B
 	signal lvl2b_ts_tag_s : lvl2_ts_tag_t; -- stored tag
-	signal lvl2b_ts_bkk_s : lvl2_ts_bkk_t; -- book keeping, 4 bits : [Data,Instr,Dirty,Valid]
-	signal lvl2b_ts_nbkk_s : lvl2_ts_nbkk_t; -- nway book keeping, 2 bits : [Victim, NextVictim]
-
+	signal lvl2b_ts_bkk_s : lvl2_ts_bkk_t; -- bookkeeping, 4 bits : [Data,Instr,Dirty,Valid]
+	signal lvl2b_ts_nbkk_s : lvl2_ts_nbkk_t; -- nway bookkeeping, 2 bits : [Victim, NextVictim]
 
 	-- Singals for indexing one of N ways in associative level2 cache
 	signal lvl2_hit_index : integer;
