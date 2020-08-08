@@ -539,7 +539,7 @@ begin
 							-- flush needed, prepare address one clk before
 							cc_state_next <= flush_data;
 							addra_lvl2_tag_s <= lvl2dl_c_idx_s;
-							addra_data_cache_s <= lvl1da_c_idx_s & cc_counter_reg;
+							--addra_data_cache_s <= lvl1da_c_idx_s & cc_counter_reg; -- NOTE retardu retardu
 						else
 							cc_state_next <= check_lvl2_data;
 						end if;

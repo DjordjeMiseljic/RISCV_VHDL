@@ -66,7 +66,7 @@ package cache_pkg is
 	constant LVL2C_BKK_VICTIM : integer := 1; -- MSB 
 
 	-- Associativity of Level2 cache - number of ways
-	constant	LVL2C_ASSOCIATIVITY : natural := 4;
+	constant	LVL2C_ASSOCIATIVITY : natural := 8;
 	constant	LVL2C_ASSOC_LOG2 : natural := clogb2(LVL2C_ASSOCIATIVITY);
 	-- Number of bits needed to save bookkeeping, 1 for victim, 1 for nextvictim
 	constant LVL2C_NWAY_BKK_WIDTH : integer := 2;
