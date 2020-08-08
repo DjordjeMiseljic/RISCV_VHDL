@@ -207,7 +207,7 @@ architecture Behavioral of cache_contr_nway_vnv is
 	-- Cache controler state 
 	-- LVL1 FSM - "cache controller" - communication between lvl1 and lvl2 caches
 	type cc_state is (idle, set_dirty, check_lvl2_instr, check_lvl2_data,
-		 fetch_instr, fetch_data, flush_data, flush_dependent_data, update_data_ts, update_instr_ts);
+		 fetch_instr, fetch_data, flush_data, flush_dependent_data, update_data_ts, update_instr_ts, invalidate_data);
 	signal cc_state_reg, cc_state_next: cc_state;
 	-- LVL2 FSM - "memory controller" - communication between lvl2 and physical memory (DDR RAM)
 	type mc_state is (idle, flush, fetch); 
@@ -332,9 +332,11 @@ begin
 	-- Indicates if requiered data is in lvl1 cache
 	-- 1 => processor continues
 	-- 0 => processor stalls until data ready
-	data_ready_s <= ((lvl1da_c_hit_s or (not data_access_s)) and lvl1_valid_s);
+	--data_ready_s <= ((lvl1da_c_hit_s or (not data_access_s)) and lvl1_valid_s);
+	data_ready_s <= (lvl1da_c_hit_s or (not data_access_s)) when lvl1_valid_s = '1' else '0';
 	data_ready_o <= data_ready_s;
-	instr_ready_s <= (lvl1ia_c_hit_s and lvl1_valid_s);
+	--instr_ready_s <= (lvl1ia_c_hit_s and lvl1_valid_s);
+	instr_ready_s <= lvl1ia_c_hit_s; --  when lvl1_valid_s ='1' else '0';
 	instr_ready_o <= instr_ready_s;
 
 	-- Adders for byte in block counters 
@@ -543,7 +545,8 @@ begin
 						end if;
 					end if;
 				end if;
-				
+			
+
 			when set_dirty =>
 				cc_state_next <= idle;
 				-- invalidate lvl2
@@ -554,12 +557,31 @@ begin
 				dwritea_lvl2_tag_s(lvl2_hit_index) <= 
 					lvl2a_ts_nbkk_s(lvl2_hit_index) & lvl2a_ts_bkk_s(lvl2_hit_index)(3 downto 2) & "10" & lvl2a_ts_tag_s(lvl2_hit_index);
 
-			when check_lvl2_instr => 
+
+			when invalidate_data => 
 				check_lvl2_s <= '1';
 				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
 				lvl2a_c_idx_s <= lvl2ia_c_idx_s;
 				lvl2a_c_tag_s <= lvl2ia_c_tag_s;
 
+				addra_data_tag_s <= lvl1ia_c_idx_s; -- NOTE This creates timing problems
+				dwritea_data_tag_s <= (others => '0');
+				lvl1_valid_s <= '0';
+
+				if (lvl2a_c_hit_s = '1') then
+					cc_state_next <= fetch_instr;
+					--new block coming, previous block is going to be removed from lvl1ic
+					addra_lvl2_tag_s <= lvl2il_c_idx_s;
+					addra_lvl2_cache_s(lvl2_hit_index) <= lvl2ia_c_idx_s & cc_counter_reg;
+				else
+					cc_state_next <= check_lvl2_instr;
+				end if;
+				
+			when check_lvl2_instr => 
+				check_lvl2_s <= '1';
+				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
+				lvl2a_c_idx_s <= lvl2ia_c_idx_s;
+				lvl2a_c_tag_s <= lvl2ia_c_tag_s;
 				if (lvl2a_c_hit_s = '1') then
 					cc_state_next <= fetch_instr;
 					--new block coming, previous block is going to be removed from lvl1ic
@@ -568,11 +590,8 @@ begin
 				elsif (flush_lvl1d_s = '1') then
 					cc_state_next <= flush_dependent_data;
 				else
-					if(invalidate_lvl1d_s = '1')then
-						addra_data_tag_s <= lvl1ia_c_idx_s;
-						dwritea_data_tag_s <= (others => '0');
-						wea_data_tag_s <= '1';
-						lvl1_valid_s <= '0';
+					if(invalidate_lvl1d_s = '1' )then
+						cc_state_next <= invalidate_data;
 					end if;
 					if (invalidate_lvl1i_s = '1') then 
 						lvl1ia_ts_valid_next (to_integer(unsigned(lvl1ia_c_idx_s))) <= '0';
@@ -598,7 +617,7 @@ begin
 						lvl1ia_ts_valid_next (to_integer(unsigned(lvl1da_c_idx_s))) <= '0';
 					end if;
 					if (invalidate_lvl1d_s = '1') then
-						addra_data_tag_s <= lvl1da_c_idx_s;
+						--addra_data_tag_s <= lvl1da_c_idx_s; -- not necessairy, it's default
 						dwritea_data_tag_s <= (others => '0'); 
 						wea_data_tag_s <= '1';
 					end if;
@@ -669,6 +688,7 @@ begin
 				-- lvl1i cache is asking for this data from level 2
 				addra_lvl2_cache_s(lvl2_hit_index) <= lvl2ia_c_idx_s & cc_counter_reg;
 				addra_data_cache_s <= lvl1ia_c_idx_s & cc_counter_reg;
+				lvl1_valid_s <= '0';
 
 				-- this is needed because fetching in cc and mc are overlapped
 				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
@@ -857,11 +877,17 @@ begin
 							-- when evicting block, invalidate if block is in lvl1 data cache
 							if (lvl2a_ts_bkk_s(lvl2_victim_index)(LVL2C_BKK_DATA)='1')then 
 								invalidate_lvl1d_s <= '1';
+								dwriteb_lvl2_tag_s(lvl2_victim_index) <= "10" & (lvl2a_ts_bkk_s(lvl2_victim_index) and "0111") & lvl2a_ts_tag_s(lvl2_victim_index); 
+								web_lvl2_tag_s(lvl2_victim_index) <= '1';
 							end if;
 							-- when evicting block, invalidate if block is in lvl1 instr cache
 							if (lvl2a_ts_bkk_s(lvl2_victim_index)(LVL2C_BKK_INSTR)='1')then 
 								invalidate_lvl1i_s <= '1';
 							end if;
+							-- NOTE CODE SEGMENT A taken from fetch state
+							dwriteb_lvl2_tag_s(lvl2_victim_index) <= "10" & "0001" & lvl2a_c_tag_s; 
+							web_lvl2_tag_s(lvl2_victim_index) <= '1';
+							-- NOTE NOTE check : use victim "10" instead of using nbkk_s
 					end case;
 				end if;
 
@@ -896,10 +922,10 @@ begin
 				mc_counter_next <= mc_counter_incr;
 
 				addrb_lvl2_tag_s <= lvl2a_c_idx_s;
-				if(mc_counter_reg = COUNTER_MIN) then  -- because of the read first mode
-					dwriteb_lvl2_tag_s(lvl2_victim_index) <= lvl2b_ts_nbkk_s(lvl2_victim_index) & "0001" & lvl2a_c_tag_s;
-					web_lvl2_tag_s(lvl2_victim_index) <= '1';
-				end if;
+
+				--if(mc_counter_reg = COUNTER_MIN) then  -- because of the read first mode
+					-- NOTE code segment A was taken from here 
+				--end if;
 
 				if(mc_counter_reg = COUNTER_MAX)then 
 					mc_state_next <= idle;
