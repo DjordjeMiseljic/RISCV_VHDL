@@ -204,6 +204,8 @@ architecture Behavioral of cache_contr_nway_vnv is
 	signal invalidate_lvl1d_s  : std_logic; -- lvl2FSM is signaling lvl1FSM to invalidate block
 	signal invalidate_lvl1i_s  : std_logic; -- lvl2FSM is signaling lvl1FSM to invalidate block
 
+	signal bram_read_rdy_reg  : std_logic; -- lvl2FSM is signaling lvl1FSM to invalidate block
+	signal bram_read_rdy_next  : std_logic; -- lvl2FSM is signaling lvl1FSM to invalidate block
 	-- Cache controler state 
 	-- LVL1 FSM - "cache controller" - communication between lvl1 and lvl2 caches
 	type cc_state is (idle, set_dirty, check_lvl2_instr, check_lvl2_data,
@@ -221,6 +223,7 @@ architecture Behavioral of cache_contr_nway_vnv is
 	-- Usefull constants for checking end and begining of bloc transfer
 	constant COUNTER_MAX : std_logic_vector(BLOCK_ADDR_WIDTH-3 downto 0) := (others =>'1');
 	constant COUNTER_MIN : std_logic_vector(BLOCK_ADDR_WIDTH-3 downto 0) := (others =>'0');
+	constant COUNTER_ONE : std_logic_vector(BLOCK_ADDR_WIDTH-3 downto 0) := std_logic_vector(to_unsigned(1,BLOCK_ADDR_WIDTH-2));
 
 begin
 
@@ -315,6 +318,19 @@ begin
 		end if;
 	end process;
 	
+
+	hp_bram_reg : if TS_BRAM_TYPE = "HIGH_PERFORMANCE" generate
+	bram_read_clk_delay : process(clk)is
+	begin
+		if(rising_edge(clk))then
+			if(reset= '0')then
+				bram_read_rdy_reg <= '0';
+			else
+				bram_read_rdy_reg <= bram_read_rdy_next;
+			end if;
+		end if;
+	end process;
+	end generate;
 	
 
 	--************************* COMBINATIONAL LOGIC *************************
@@ -476,10 +492,13 @@ begin
 		lvl2ia_c_idx_s, lvl2ia_c_tag_s, lvl2da_c_idx_s, lvl2da_c_tag_s, lvl2il_c_idx_s, lvl2dl_c_idx_s, lvl2dl_c_tag_s, 
 		lvl2a_c_hit_s, lvl2a_ts_tag_s, lvl2a_ts_bkk_s, lvl2a_ts_nbkk_s,  dreada_lvl2_cache_s, 
 		flush_lvl1d_s, invalidate_lvl1d_s, invalidate_lvl1i_s,
-		lvl2_hit_index, lvl2_nextv_index, lvl2_victim_index, lvl2_rando_index, lvl2_dflush_index, lvl2_iflush_index) is
+		lvl2_hit_index, lvl2_nextv_index, lvl2_victim_index, lvl2_rando_index, lvl2_dflush_index, lvl2_iflush_index, bram_read_rdy_reg) is
 	begin
 		check_lvl2_s <= '0';
 		lvl1_valid_s <= '1';
+		if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
+			bram_read_rdy_next <= '0';
+		end if;
 		-- for FSM
 		cc_state_next <= idle;
 		cc_counter_next <= (others => '0');
@@ -548,23 +567,40 @@ begin
 			
 
 			when set_dirty =>
-				cc_state_next <= idle;
-				-- invalidate lvl2
+
 				lvl2a_c_tag_s <= lvl2da_c_tag_s;
 				addra_lvl2_tag_s <= lvl2da_c_idx_s;
-				wea_lvl2_tag_s(lvl2_hit_index) <= '1';
-				-- dirty but invalid, as the newer data is in data cache
-				dwritea_lvl2_tag_s(lvl2_hit_index) <= 
-					lvl2a_ts_nbkk_s(lvl2_hit_index) & lvl2a_ts_bkk_s(lvl2_hit_index)(3 downto 2) & "10" & lvl2a_ts_tag_s(lvl2_hit_index);
+
+				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
+					if(bram_read_rdy_reg = '1') then
+						cc_state_next <= idle;
+						wea_lvl2_tag_s(lvl2_hit_index) <= '1';
+						-- dirty but invalid, as the newer data is in data cache
+						dwritea_lvl2_tag_s(lvl2_hit_index) <= 
+							lvl2a_ts_nbkk_s(lvl2_hit_index) & lvl2a_ts_bkk_s(lvl2_hit_index)(3 downto 2) & "10" & lvl2a_ts_tag_s(lvl2_hit_index);
+					else
+						lvl1_valid_s <= '0';
+						cc_state_next <= set_dirty;
+						bram_read_rdy_next<='1';
+					end if;
+
+				else -- LOW_LATENCY - ONE CLK DELAY
+					cc_state_next <= idle;
+					wea_lvl2_tag_s(lvl2_hit_index) <= '1';
+					-- dirty but invalid, as the newer data is in data cache
+					dwritea_lvl2_tag_s(lvl2_hit_index) <= 
+						lvl2a_ts_nbkk_s(lvl2_hit_index) & lvl2a_ts_bkk_s(lvl2_hit_index)(3 downto 2) & "10" & lvl2a_ts_tag_s(lvl2_hit_index);
+				end if;
 
 
 			when invalidate_data => 
+
 				check_lvl2_s <= '1';
 				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
 				lvl2a_c_idx_s <= lvl2ia_c_idx_s;
 				lvl2a_c_tag_s <= lvl2ia_c_tag_s;
 
-				addra_data_tag_s <= lvl1ia_c_idx_s; -- NOTE This creates timing problems
+				addra_data_tag_s <= lvl1ia_c_idx_s; 
 				dwritea_data_tag_s <= (others => '0');
 				lvl1_valid_s <= '0';
 
@@ -578,26 +614,57 @@ begin
 				end if;
 				
 			when check_lvl2_instr => 
-				check_lvl2_s <= '1';
+
 				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
 				lvl2a_c_idx_s <= lvl2ia_c_idx_s;
 				lvl2a_c_tag_s <= lvl2ia_c_tag_s;
-				if (lvl2a_c_hit_s = '1') then
-					cc_state_next <= fetch_instr;
-					--new block coming, previous block is going to be removed from lvl1ic
-					addra_lvl2_tag_s <= lvl2il_c_idx_s;
-					addra_lvl2_cache_s(lvl2_hit_index) <= lvl2ia_c_idx_s & cc_counter_reg;
-				elsif (flush_lvl1d_s = '1') then
-					cc_state_next <= flush_dependent_data;
-				else
-					if(invalidate_lvl1d_s = '1' )then
-						cc_state_next <= invalidate_data;
+
+				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
+					if(bram_read_rdy_reg = '1') then
+
+						if (lvl2a_c_hit_s = '1') then
+							cc_state_next <= fetch_instr;
+							--new block coming, previous block is going to be removed from lvl1ic
+							addra_lvl2_tag_s <= lvl2il_c_idx_s;
+							addra_lvl2_cache_s(lvl2_hit_index) <= lvl2ia_c_idx_s & cc_counter_reg;
+						elsif (flush_lvl1d_s = '1') then
+							cc_state_next <= flush_dependent_data;
+						else
+							if(invalidate_lvl1d_s = '1' )then
+								cc_state_next <= invalidate_data;
+							end if;
+							if (invalidate_lvl1i_s = '1') then 
+								lvl1ia_ts_valid_next (to_integer(unsigned(lvl1ia_c_idx_s))) <= '0';
+							end if;
+							cc_state_next <= check_lvl2_instr; -- stay here if lvl2 is not ready
+						end if;
+						bram_read_rdy_next<='1';
+						check_lvl2_s <= '1';
+					else
+						bram_read_rdy_next<='1';
+						check_lvl2_s <= '0';
 					end if;
-					if (invalidate_lvl1i_s = '1') then 
-						lvl1ia_ts_valid_next (to_integer(unsigned(lvl1ia_c_idx_s))) <= '0';
+
+				else -- LOW LATENCY
+
+					if (lvl2a_c_hit_s = '1') then
+						cc_state_next <= fetch_instr;
+						--new block coming, previous block is going to be removed from lvl1ic
+						addra_lvl2_tag_s <= lvl2il_c_idx_s;
+						addra_lvl2_cache_s(lvl2_hit_index) <= lvl2ia_c_idx_s & cc_counter_reg;
+					elsif (flush_lvl1d_s = '1') then
+						cc_state_next <= flush_dependent_data;
+					else
+						if(invalidate_lvl1d_s = '1' )then
+							cc_state_next <= invalidate_data;
+						end if;
+						if (invalidate_lvl1i_s = '1') then 
+							lvl1ia_ts_valid_next (to_integer(unsigned(lvl1ia_c_idx_s))) <= '0';
+						end if;
+						cc_state_next <= check_lvl2_instr; -- stay here if lvl2 is not ready
 					end if;
-					cc_state_next <= check_lvl2_instr; -- stay here if lvl2 is not ready
 				end if;
+
 
 
 			when check_lvl2_data => 
@@ -606,20 +673,46 @@ begin
 				lvl2a_c_idx_s <= lvl2da_c_idx_s;
 				lvl2a_c_tag_s <= lvl2da_c_tag_s;
 
-				if (lvl2a_c_hit_s = '1') then
-					cc_state_next <= fetch_data;
-					-- new block coming, previous block is going to be removed from lvl1dc
-					addra_lvl2_tag_s <= lvl2dl_c_idx_s;
-					addra_lvl2_cache_s(lvl2_hit_index) <= lvl2da_c_idx_s & cc_counter_reg;
-				else
-					cc_state_next <= check_lvl2_data; -- stay here if lvl2 is not ready
-					if (invalidate_lvl1i_s = '1') then
-						lvl1ia_ts_valid_next (to_integer(unsigned(lvl1da_c_idx_s))) <= '0';
+				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
+					if(bram_read_rdy_reg = '1') then
+						bram_read_rdy_next<='1';
+						check_lvl2_s <= '1';
+						if (lvl2a_c_hit_s = '1') then
+							cc_state_next <= fetch_data;
+							-- new block coming, previous block is going to be removed from lvl1dc
+							addra_lvl2_tag_s <= lvl2dl_c_idx_s;
+							addra_lvl2_cache_s(lvl2_hit_index) <= lvl2da_c_idx_s & cc_counter_reg;
+						else
+							cc_state_next <= check_lvl2_data; -- stay here if lvl2 is not ready
+							if (invalidate_lvl1i_s = '1') then
+								lvl1ia_ts_valid_next (to_integer(unsigned(lvl1da_c_idx_s))) <= '0';
+							end if;
+							if (invalidate_lvl1d_s = '1') then
+								--addra_data_tag_s <= lvl1da_c_idx_s; -- not necessairy, it's default
+								dwritea_data_tag_s <= (others => '0'); 
+								wea_data_tag_s <= '1';
+							end if;
+						end if;
+					else
+						bram_read_rdy_next<='1';
+						check_lvl2_s <= '0';
 					end if;
-					if (invalidate_lvl1d_s = '1') then
-						--addra_data_tag_s <= lvl1da_c_idx_s; -- not necessairy, it's default
-						dwritea_data_tag_s <= (others => '0'); 
-						wea_data_tag_s <= '1';
+				else -- LOW LATENCY
+					if (lvl2a_c_hit_s = '1') then
+						cc_state_next <= fetch_data;
+						-- new block coming, previous block is going to be removed from lvl1dc
+						addra_lvl2_tag_s <= lvl2dl_c_idx_s;
+						addra_lvl2_cache_s(lvl2_hit_index) <= lvl2da_c_idx_s & cc_counter_reg;
+					else
+						cc_state_next <= check_lvl2_data; -- stay here if lvl2 is not ready
+						if (invalidate_lvl1i_s = '1') then
+							lvl1ia_ts_valid_next (to_integer(unsigned(lvl1da_c_idx_s))) <= '0';
+						end if;
+						if (invalidate_lvl1d_s = '1') then
+							--addra_data_tag_s <= lvl1da_c_idx_s; -- not necessairy, it's default
+							dwritea_data_tag_s <= (others => '0'); 
+							wea_data_tag_s <= '1';
+						end if;
 					end if;
 				end if;
 
@@ -638,12 +731,23 @@ begin
 				lvl2a_c_tag_s <= lvl2ia_c_tag_s;
 				lvl2a_c_idx_s <= lvl2ia_c_idx_s;
 
-				if(cc_counter_reg = COUNTER_MIN)then 
-					-- block is going to be removed from lvl1ic
-					addra_lvl2_tag_s <= lvl2il_c_idx_s;
-					dwritea_lvl2_tag_s(lvl2_iflush_index) <= 
-						lvl2a_ts_nbkk_s(lvl2_iflush_index) & (lvl2a_ts_bkk_s(lvl2_iflush_index) and "1011") & lvl2a_ts_tag_s(lvl2_iflush_index);
-					wea_lvl2_tag_s(lvl2_iflush_index) <= '1';
+				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
+					if(cc_counter_reg = COUNTER_MIN)then 
+						addra_lvl2_tag_s <= lvl2il_c_idx_s;
+					elsif(cc_counter_reg = COUNTER_ONE)then 
+						addra_lvl2_tag_s <= lvl2il_c_idx_s;
+						dwritea_lvl2_tag_s(lvl2_iflush_index) <= 
+							lvl2a_ts_nbkk_s(lvl2_iflush_index) & (lvl2a_ts_bkk_s(lvl2_iflush_index) and "1011") & lvl2a_ts_tag_s(lvl2_iflush_index);
+						wea_lvl2_tag_s(lvl2_iflush_index) <= '1';
+					end if;
+				else --LOW_LATENECY
+					if(cc_counter_reg = COUNTER_MIN)then 
+						-- block is going to be removed from lvl1ic
+						addra_lvl2_tag_s <= lvl2il_c_idx_s;
+						dwritea_lvl2_tag_s(lvl2_iflush_index) <= 
+							lvl2a_ts_nbkk_s(lvl2_iflush_index) & (lvl2a_ts_bkk_s(lvl2_iflush_index) and "1011") & lvl2a_ts_tag_s(lvl2_iflush_index);
+						wea_lvl2_tag_s(lvl2_iflush_index) <= '1';
+					end if;
 				end if;
 
 				if(cc_counter_reg = COUNTER_MAX)then 
@@ -667,12 +771,24 @@ begin
 				lvl2a_c_tag_s <= lvl2da_c_tag_s; 
 				lvl2a_c_idx_s <= lvl2da_c_idx_s;
 
-				if(cc_counter_reg = COUNTER_MIN)then 
-					-- block is going to be removed from lvl1dc
-					addra_lvl2_tag_s <= lvl2dl_c_idx_s;
-					dwritea_lvl2_tag_s(lvl2_dflush_index) <=  
-						lvl2a_ts_nbkk_s(lvl2_dflush_index) & (lvl2a_ts_bkk_s(lvl2_dflush_index) and "0111") & lvl2a_ts_tag_s(lvl2_dflush_index);
-					wea_lvl2_tag_s(lvl2_dflush_index) <= '1';
+				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
+					if(cc_counter_reg = COUNTER_MIN)then 
+						addra_lvl2_tag_s <= lvl2dl_c_idx_s;
+					elsif(cc_counter_reg = COUNTER_ONE)then 
+						-- block is going to be removed from lvl1dc
+						addra_lvl2_tag_s <= lvl2dl_c_idx_s;
+						dwritea_lvl2_tag_s(lvl2_dflush_index) <=  
+							lvl2a_ts_nbkk_s(lvl2_dflush_index) & (lvl2a_ts_bkk_s(lvl2_dflush_index) and "0111") & lvl2a_ts_tag_s(lvl2_dflush_index);
+						wea_lvl2_tag_s(lvl2_dflush_index) <= '1';
+					end if;
+				else -- LOW_LATENCY
+					if(cc_counter_reg = COUNTER_MIN)then 
+						-- block is going to be removed from lvl1dc
+						addra_lvl2_tag_s <= lvl2dl_c_idx_s;
+						dwritea_lvl2_tag_s(lvl2_dflush_index) <=  
+							lvl2a_ts_nbkk_s(lvl2_dflush_index) & (lvl2a_ts_bkk_s(lvl2_dflush_index) and "0111") & lvl2a_ts_tag_s(lvl2_dflush_index);
+						wea_lvl2_tag_s(lvl2_dflush_index) <= '1';
+					end if;
 				end if;
 
 				if(cc_counter_reg = COUNTER_MAX)then 
@@ -1094,7 +1210,8 @@ begin
 		level_2_tag_store: entity work.ram_tdp_rf(rtl)
 			generic map (
 				 RAM_WIDTH => LVL2C_TAG_WIDTH + LVL2C_BKK_WIDTH + LVL2C_NWAY_BKK_WIDTH,
-				 RAM_DEPTH => LVL2C_NB_BLOCKS
+				 RAM_DEPTH => LVL2C_NB_BLOCKS,
+				 RAM_PERFORMANCE => TS_BRAM_TYPE      -- Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
 			)
 			port map(
 				--global

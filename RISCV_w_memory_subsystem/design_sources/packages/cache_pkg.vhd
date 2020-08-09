@@ -13,6 +13,7 @@ package cache_pkg is
 	-- Physical adress size and width
 	constant PHY_ADDR_SPACE : integer := 512*1024*1024;
 	constant PHY_ADDR_WIDTH : integer := clogb2(PHY_ADDR_SPACE);
+	constant TS_BRAM_TYPE : string := "LOW_LATENCY";
 
 	-- 
 	-- Block size in bytes, this can be changed, as long as it is power of 2
@@ -25,7 +26,7 @@ package cache_pkg is
 
 	-- Basic Level 1 cache parameters:
 	-- This will be size of both instruction and data caches in bytes
-	constant LVL1_CACHE_SIZE : integer := 1024*4; 
+	constant LVL1_CACHE_SIZE : integer := 1024; 
 	-- Derived cache parameters:
 	-- Number of blocks in cache
 	constant LVL1C_NB_BLOCKS : integer := LVL1_CACHE_SIZE/BLOCK_SIZE; 
@@ -42,7 +43,7 @@ package cache_pkg is
 
 	-- Basic Level 2 cache parameters:
 	-- This will be size of both instruction and data caches in bytes
-	constant LVL2_CACHE_SIZE : integer := 1024*8; 
+	constant LVL2_CACHE_SIZE : integer := 1024*4; 
 	-- Derived cache parameters:
 	-- Number of blocks in cache
 	constant LVL2C_NB_BLOCKS : integer := LVL2_CACHE_SIZE/BLOCK_SIZE; 
@@ -66,7 +67,7 @@ package cache_pkg is
 	constant LVL2C_BKK_VICTIM : integer := 1; -- MSB 
 
 	-- Associativity of Level2 cache - number of ways
-	constant	LVL2C_ASSOCIATIVITY : natural := 8;
+	constant	LVL2C_ASSOCIATIVITY : natural := 4;
 	constant	LVL2C_ASSOC_LOG2 : natural := clogb2(LVL2C_ASSOCIATIVITY);
 	-- Number of bits needed to save bookkeeping, 1 for victim, 1 for nextvictim
 	constant LVL2C_NWAY_BKK_WIDTH : integer := 2;
