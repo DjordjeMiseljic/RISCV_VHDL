@@ -204,8 +204,8 @@ architecture Behavioral of cache_contr_nway_vnv is
 	signal invalidate_lvl1d_s  : std_logic; -- lvl2FSM is signaling lvl1FSM to invalidate block
 	signal invalidate_lvl1i_s  : std_logic; -- lvl2FSM is signaling lvl1FSM to invalidate block
 
-	signal bram_read_rdy_reg  : std_logic; -- lvl2FSM is signaling lvl1FSM to invalidate block
-	signal bram_read_rdy_next  : std_logic; -- lvl2FSM is signaling lvl1FSM to invalidate block
+	signal bram_read_rdy_reg  : std_logic := '0'; -- lvl2FSM is signaling lvl1FSM to invalidate block
+	signal bram_read_rdy_next  : std_logic := '0'; -- lvl2FSM is signaling lvl1FSM to invalidate block
 	-- Cache controler state 
 	-- LVL1 FSM - "cache controller" - communication between lvl1 and lvl2 caches
 	type cc_state is (idle, set_dirty, check_lvl2_instr, check_lvl2_data,
@@ -491,8 +491,8 @@ begin
 		lvl1da_c_addr_s, lvl1da_c_idx_s, lvl1da_c_tag_s, lvl1da_c_hit_s, lvl1da_ts_tag_s, lvl1da_ts_bkk_s, dreada_data_cache_s,
 		lvl2ia_c_idx_s, lvl2ia_c_tag_s, lvl2da_c_idx_s, lvl2da_c_tag_s, lvl2il_c_idx_s, lvl2dl_c_idx_s, lvl2dl_c_tag_s, 
 		lvl2a_c_hit_s, lvl2a_ts_tag_s, lvl2a_ts_bkk_s, lvl2a_ts_nbkk_s,  dreada_lvl2_cache_s, 
-		flush_lvl1d_s, invalidate_lvl1d_s, invalidate_lvl1i_s,
-		lvl2_hit_index, lvl2_nextv_index, lvl2_victim_index, lvl2_rando_index, lvl2_dflush_index, lvl2_iflush_index, bram_read_rdy_reg) is
+		flush_lvl1d_s, invalidate_lvl1d_s, invalidate_lvl1i_s, bram_read_rdy_reg,
+		lvl2_hit_index, lvl2_nextv_index, lvl2_victim_index, lvl2_rando_index, lvl2_dflush_index, lvl2_iflush_index) is
 	begin
 		check_lvl2_s <= '0';
 		lvl1_valid_s <= '1';
@@ -646,7 +646,7 @@ begin
 					end if;
 
 				else -- LOW LATENCY
-
+					check_lvl2_s <= '1';
 					if (lvl2a_c_hit_s = '1') then
 						cc_state_next <= fetch_instr;
 						--new block coming, previous block is going to be removed from lvl1ic
@@ -668,15 +668,12 @@ begin
 
 
 			when check_lvl2_data => 
-				check_lvl2_s <= '1';
 				addra_lvl2_tag_s <= lvl2da_c_idx_s;
 				lvl2a_c_idx_s <= lvl2da_c_idx_s;
 				lvl2a_c_tag_s <= lvl2da_c_tag_s;
 
 				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
 					if(bram_read_rdy_reg = '1') then
-						bram_read_rdy_next<='1';
-						check_lvl2_s <= '1';
 						if (lvl2a_c_hit_s = '1') then
 							cc_state_next <= fetch_data;
 							-- new block coming, previous block is going to be removed from lvl1dc
@@ -693,11 +690,14 @@ begin
 								wea_data_tag_s <= '1';
 							end if;
 						end if;
+						bram_read_rdy_next<='1';
+						check_lvl2_s <= '1';
 					else
 						bram_read_rdy_next<='1';
 						check_lvl2_s <= '0';
 					end if;
 				else -- LOW LATENCY
+					check_lvl2_s <= '1';
 					if (lvl2a_c_hit_s = '1') then
 						cc_state_next <= fetch_data;
 						-- new block coming, previous block is going to be removed from lvl1dc

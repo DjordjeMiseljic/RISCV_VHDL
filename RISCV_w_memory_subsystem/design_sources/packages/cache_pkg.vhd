@@ -26,7 +26,7 @@ package cache_pkg is
 
 	-- Basic Level 1 cache parameters:
 	-- This will be size of both instruction and data caches in bytes
-	constant LVL1_CACHE_SIZE : integer := 1024; 
+	constant LVL1_CACHE_SIZE : integer := 1024*8; 
 	-- Derived cache parameters:
 	-- Number of blocks in cache
 	constant LVL1C_NB_BLOCKS : integer := LVL1_CACHE_SIZE/BLOCK_SIZE; 
@@ -43,7 +43,7 @@ package cache_pkg is
 
 	-- Basic Level 2 cache parameters:
 	-- This will be size of both instruction and data caches in bytes
-	constant LVL2_CACHE_SIZE : integer := 1024*4; 
+	constant LVL2_CACHE_SIZE : integer := 1024*16; 
 	-- Derived cache parameters:
 	-- Number of blocks in cache
 	constant LVL2C_NB_BLOCKS : integer := LVL2_CACHE_SIZE/BLOCK_SIZE; 
