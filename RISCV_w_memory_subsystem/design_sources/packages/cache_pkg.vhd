@@ -13,8 +13,9 @@ package cache_pkg is
 	-- Physical adress size and width
 	constant PHY_ADDR_SPACE : integer := 512*1024*1024;
 	constant PHY_ADDR_WIDTH : integer := clogb2(PHY_ADDR_SPACE);
-	constant TS_BRAM_TYPE : string := "LOW_LATENCY";
-
+	-- "HIGH_PERFORMANCE" for higher clk speed and higher troughput
+	-- "LOW_LATENCY" for lower clk speed and low latency
+	constant TS_BRAM_TYPE : string := "LOW_LATENCY"; 
 	-- 
 	-- Block size in bytes, this can be changed, as long as it is power of 2
 	constant BLOCK_SIZE : integer := 32;
@@ -26,7 +27,7 @@ package cache_pkg is
 
 	-- Basic Level 1 cache parameters:
 	-- This will be size of both instruction and data caches in bytes
-	constant LVL1_CACHE_SIZE : integer := 1024*8; 
+	constant LVL1_CACHE_SIZE : integer := 1024*1; 
 	-- Derived cache parameters:
 	-- Number of blocks in cache
 	constant LVL1C_NB_BLOCKS : integer := LVL1_CACHE_SIZE/BLOCK_SIZE; 
@@ -43,7 +44,7 @@ package cache_pkg is
 
 	-- Basic Level 2 cache parameters:
 	-- This will be size of both instruction and data caches in bytes
-	constant LVL2_CACHE_SIZE : integer := 1024*16; 
+	constant LVL2_CACHE_SIZE : integer := 1024*4; 
 	-- Derived cache parameters:
 	-- Number of blocks in cache
 	constant LVL2C_NB_BLOCKS : integer := LVL2_CACHE_SIZE/BLOCK_SIZE; 

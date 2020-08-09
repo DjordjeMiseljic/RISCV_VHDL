@@ -319,7 +319,7 @@ begin
 	end process;
 	
 
-	hp_bram_reg : if TS_BRAM_TYPE = "HIGH_PERFORMANCE" generate
+	hp_bram_delay_ff : if TS_BRAM_TYPE = "HIGH_PERFORMANCE" generate
 	bram_read_clk_delay : process(clk)is
 	begin
 		if(rising_edge(clk))then
@@ -620,8 +620,11 @@ begin
 				lvl2a_c_tag_s <= lvl2ia_c_tag_s;
 
 				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
-					if(bram_read_rdy_reg = '1') then
+				 -- *** HIGH PERFORMANCE IMPLEMENTATION***
 
+					if(bram_read_rdy_reg = '1') then
+						bram_read_rdy_next<='1';
+						check_lvl2_s <= '1';
 						if (lvl2a_c_hit_s = '1') then
 							cc_state_next <= fetch_instr;
 							--new block coming, previous block is going to be removed from lvl1ic
@@ -638,14 +641,15 @@ begin
 							end if;
 							cc_state_next <= check_lvl2_instr; -- stay here if lvl2 is not ready
 						end if;
-						bram_read_rdy_next<='1';
-						check_lvl2_s <= '1';
 					else
+						cc_state_next <= check_lvl2_instr;
 						bram_read_rdy_next<='1';
 						check_lvl2_s <= '0';
 					end if;
 
-				else -- LOW LATENCY
+				else 
+				-- *** LOW LATENCY IMPLEMENTATION***
+
 					check_lvl2_s <= '1';
 					if (lvl2a_c_hit_s = '1') then
 						cc_state_next <= fetch_instr;
@@ -663,6 +667,7 @@ begin
 						end if;
 						cc_state_next <= check_lvl2_instr; -- stay here if lvl2 is not ready
 					end if;
+
 				end if;
 
 
@@ -673,7 +678,11 @@ begin
 				lvl2a_c_tag_s <= lvl2da_c_tag_s;
 
 				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
+				-- *** HIGH PERFORMANCE IMPLEMENTATION***
+
 					if(bram_read_rdy_reg = '1') then
+						bram_read_rdy_next<='1';
+						check_lvl2_s <= '1';
 						if (lvl2a_c_hit_s = '1') then
 							cc_state_next <= fetch_data;
 							-- new block coming, previous block is going to be removed from lvl1dc
@@ -690,13 +699,15 @@ begin
 								wea_data_tag_s <= '1';
 							end if;
 						end if;
-						bram_read_rdy_next<='1';
-						check_lvl2_s <= '1';
 					else
+						cc_state_next <= check_lvl2_data;
 						bram_read_rdy_next<='1';
 						check_lvl2_s <= '0';
 					end if;
-				else -- LOW LATENCY
+
+				else
+				-- *** LOW LATENCY IMPLEMENTATION***
+
 					check_lvl2_s <= '1';
 					if (lvl2a_c_hit_s = '1') then
 						cc_state_next <= fetch_data;
@@ -714,6 +725,7 @@ begin
 							wea_data_tag_s <= '1';
 						end if;
 					end if;
+
 				end if;
 
 
@@ -732,6 +744,8 @@ begin
 				lvl2a_c_idx_s <= lvl2ia_c_idx_s;
 
 				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
+				-- *** HIGH PERFORMANCE IMPLEMENTATION***
+
 					if(cc_counter_reg = COUNTER_MIN)then 
 						addra_lvl2_tag_s <= lvl2il_c_idx_s;
 					elsif(cc_counter_reg = COUNTER_ONE)then 
@@ -740,7 +754,10 @@ begin
 							lvl2a_ts_nbkk_s(lvl2_iflush_index) & (lvl2a_ts_bkk_s(lvl2_iflush_index) and "1011") & lvl2a_ts_tag_s(lvl2_iflush_index);
 						wea_lvl2_tag_s(lvl2_iflush_index) <= '1';
 					end if;
-				else --LOW_LATENECY
+
+				else
+				-- *** LOW LATENCY IMPLEMENTATION***
+
 					if(cc_counter_reg = COUNTER_MIN)then 
 						-- block is going to be removed from lvl1ic
 						addra_lvl2_tag_s <= lvl2il_c_idx_s;
@@ -748,6 +765,7 @@ begin
 							lvl2a_ts_nbkk_s(lvl2_iflush_index) & (lvl2a_ts_bkk_s(lvl2_iflush_index) and "1011") & lvl2a_ts_tag_s(lvl2_iflush_index);
 						wea_lvl2_tag_s(lvl2_iflush_index) <= '1';
 					end if;
+
 				end if;
 
 				if(cc_counter_reg = COUNTER_MAX)then 
@@ -772,6 +790,8 @@ begin
 				lvl2a_c_idx_s <= lvl2da_c_idx_s;
 
 				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
+				-- *** HIGH PERFORMANCE IMPLEMENTATION***
+
 					if(cc_counter_reg = COUNTER_MIN)then 
 						addra_lvl2_tag_s <= lvl2dl_c_idx_s;
 					elsif(cc_counter_reg = COUNTER_ONE)then 
@@ -781,7 +801,10 @@ begin
 							lvl2a_ts_nbkk_s(lvl2_dflush_index) & (lvl2a_ts_bkk_s(lvl2_dflush_index) and "0111") & lvl2a_ts_tag_s(lvl2_dflush_index);
 						wea_lvl2_tag_s(lvl2_dflush_index) <= '1';
 					end if;
-				else -- LOW_LATENCY
+
+				else
+				-- *** LOW LATENCY IMPLEMENTATION***
+
 					if(cc_counter_reg = COUNTER_MIN)then 
 						-- block is going to be removed from lvl1dc
 						addra_lvl2_tag_s <= lvl2dl_c_idx_s;
@@ -789,6 +812,7 @@ begin
 							lvl2a_ts_nbkk_s(lvl2_dflush_index) & (lvl2a_ts_bkk_s(lvl2_dflush_index) and "0111") & lvl2a_ts_tag_s(lvl2_dflush_index);
 						wea_lvl2_tag_s(lvl2_dflush_index) <= '1';
 					end if;
+
 				end if;
 
 				if(cc_counter_reg = COUNTER_MAX)then 
@@ -1162,8 +1186,8 @@ begin
 	rstb_lvl2_cache_s <= reset; -- TODO same
 	ena_lvl2_cache_s <= '1';
 	enb_lvl2_cache_s <= '1';
-	regcea_lvl2_cache_s <= '0'; -- TODO remove these if Vivado doesnt
-	regceb_lvl2_cache_s <= '0'; -- TODO remove these if Vivado doesnt
+	regcea_lvl2_cache_s <= '1'; -- TODO remove these if Vivado doesnt
+	regceb_lvl2_cache_s <= '1'; -- TODO remove these if Vivado doesnt
 	-- Instantiation of level 2 caches
 	lvl2_cache_generate:
 	for i in 0 to LVL2C_ASSOCIATIVITY-1 generate
@@ -1203,8 +1227,8 @@ begin
 	enb_lvl2_tag_s <= '1';
 	rsta_lvl2_tag_s <= '0';
 	rstb_lvl2_tag_s <= '0';
-	regcea_lvl2_tag_s <= '0'; -- TODO remove these if Vivado doesnt
-	regceb_lvl2_tag_s <= '0'; -- TODO remove these if Vivado doesnt
+	regcea_lvl2_tag_s <= '1';
+	regceb_lvl2_tag_s <= '1';
 	lvl2_tag_store_generate:
 	for i in 0 to LVL2C_ASSOCIATIVITY-1 generate
 		level_2_tag_store: entity work.ram_tdp_rf(rtl)
