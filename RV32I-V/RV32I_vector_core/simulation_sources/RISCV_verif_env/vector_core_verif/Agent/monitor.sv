@@ -63,8 +63,7 @@ class vector_core_monitor extends uvm_monitor;
 	       fork
 		   //Instruction fork
 		   begin
-		       if (!vif.vector_stall_s) begin
-			   #1;			   
+		       if (!vif.vector_stall_s) begin			   
 			   curr_instr_item.vector_instruction_i = vif.vector_instruction_i;
 			   curr_instr_item.rs1_i = vif.rs1_i;
 			   curr_instr_item.rs2_i = vif.rs2_i;		       

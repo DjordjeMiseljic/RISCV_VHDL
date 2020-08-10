@@ -11,9 +11,9 @@ package v_alu_ops_pkg;
    const logic [4 : 0] or_op= 5'b00001; //-> bitwise or
    const logic [4 : 0] add_op= 5'b00010; //-> add a_i and b_i
    const logic [4 : 0] xor_op= 5'b00011; //-> bitwise xor   
-   const logic [4 : 0] sub_op= 5'b00110; //-> sub a_i and b_i
-   const logic [4 : 0] srl_op= 5'b00111; //-> shift right logic
-   const logic [4 : 0] sra_op= 5'b01000; //-> shift right arithmetic
+   const logic [4 : 0] sub_op= 5'b00100; //-> sub a_i and b_i
+   const logic [4 : 0] srl_op= 5'b00101; //-> shift right logic
+   const logic [4 : 0] sra_op= 5'b00110; //-> shift right arithmetic
    const logic [4 : 0] mulu_op= 5'b01001; //-> multiply lower
    const logic [4 : 0] mulhs_op= 5'b01010; //-> multiply higher signed
    const logic [4 : 0] mulhsu_op= 5'b01011; //-> multiply higher signed and unsigned
