@@ -915,7 +915,7 @@ begin
 
 				cc_state_next <= idle;
 				-- write new tag to tag store, set valid, reset dirty
-				lvl1ia_ts_valid_next (to_integer(unsigned(lvl1ia_c_idx_s))) <= '1';
+				lvl1ia_ts_valid_next(to_integer(unsigned(lvl1ia_c_idx_s))) <= '1';
 				dwritea_instr_tag_s <= lvl1ia_c_tag_s; 
 				wea_instr_tag_s <= '1';
 

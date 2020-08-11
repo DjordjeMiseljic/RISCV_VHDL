@@ -15,7 +15,7 @@ package cache_pkg is
 	constant PHY_ADDR_WIDTH : integer := clogb2(PHY_ADDR_SPACE);
 	-- "HIGH_PERFORMANCE" for higher clk speed and higher troughput
 	-- "LOW_LATENCY" for lower clk speed and low latency
-	constant TS_BRAM_TYPE : string := "LOW_LATENCY"; 
+	constant TS_BRAM_TYPE : string := "HIGH_PERFORMANCE"; 
 	-- 
 	-- Block size in bytes, this can be changed, as long as it is power of 2
 	constant BLOCK_SIZE : integer := 32;
