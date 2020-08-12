@@ -6,6 +6,7 @@ use work.cache_pkg.all;
 
 entity cache_contr_nway_vnv is
 	port (clk : in std_logic;
+			ce : in std_logic;
 			reset : in std_logic;
 			-- controller drives ce for RISC
 			data_ready_o : out std_logic;
@@ -22,7 +23,7 @@ entity cache_contr_nway_vnv is
 			axi_read_address_o : out std_logic_vector(31 downto 0);
 			axi_read_init_o	: out std_logic;
 			axi_read_data_i	: in std_logic_vector(31 downto 0);
-			axi_read_next_i : in std_logic
+			axi_read_next_i : in std_logic;
 			-- Level 1 caches
 			-- Instruction cache
 			addr_instr_i 		: in std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
@@ -300,7 +301,7 @@ begin
 		if(rising_edge(clk))then
 			if(reset = '0' or fencei_i = '1')then --or "FENCE.I SIGNAL COMING FROM CONTROL FLOW" 
 				lvl1ia_ts_valid_reg <= (others => '0');
-			else
+			elsif (ce = '1')then
 				lvl1ia_ts_valid_reg <= lvl1ia_ts_valid_next;
 			end if;
 		end if;
@@ -315,7 +316,7 @@ begin
 				mc_state_reg <= idle;
 				mc_counter_reg <= (others => '0');
 				evictor_reg <= std_logic_vector(to_unsigned(1,LVL2C_ASSOCIATIVITY));
-			else
+			elsif (ce = '1') then
 				cc_state_reg <= cc_state_next;
 				cc_counter_reg <=  cc_counter_next;
 				mc_state_reg <= mc_state_next;
@@ -332,7 +333,7 @@ begin
 		if(rising_edge(clk))then
 			if(reset= '0')then
 				bram_read_rdy_reg <= '0';
-			else
+			elsif(ce ='1')then
 				bram_read_rdy_reg <= bram_read_rdy_next;
 			end if;
 		end if;
@@ -1033,7 +1034,7 @@ begin
 							addrb_lvl2_tag_s <= lvl2a_c_idx_s;
 							addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_reg;
 							axi_write_address_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & COUNTER_MIN & "00";
-							axi_write_init <= '1';
+							axi_write_init_o <= '1';
 						when others => -- not initialized / valid but not dirty data
 							mc_state_next <= fetch;
 							addrb_lvl2_tag_s <= lvl2a_c_idx_s;
@@ -1055,9 +1056,9 @@ begin
 			when fetch =>
 				axi_read_address_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & COUNTER_MIN & "00"; 
 				addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_reg;
-				dwriteb_lvl2_cache_s(lvl2_victim_index) <= axi_read_data;
+				dwriteb_lvl2_cache_s(lvl2_victim_index) <= axi_read_data_i;
 
-				if(axi_read_next = '1') then
+				if(axi_read_next_i = '1') then
 					web_lvl2_cache_s(lvl2_victim_index) <= '1';
 					mc_counter_next <= mc_counter_incr;
 				else

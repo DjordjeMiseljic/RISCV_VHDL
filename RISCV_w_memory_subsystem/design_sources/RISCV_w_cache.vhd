@@ -49,7 +49,7 @@ architecture Behavioral of RISCV_w_cache is
 
 begin
 
-	ce_s <= '1';
+	ce_s <= '0';
 	--********** PROCESSOR CORE **************
 	-- Top Moule - RISCV processsor core instance
    TOP_RISCV_1 : entity work.TOP_RISCV

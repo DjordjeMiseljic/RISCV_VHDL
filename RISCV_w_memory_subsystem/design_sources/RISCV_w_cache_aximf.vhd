@@ -8,7 +8,7 @@ entity RISCV_w_cache is
 	port (clk : in std_logic;
 			ce : in std_logic;
 			reset : in std_logic;
-			pc_reg_o : out std_logic;
+			pc_reg_o : out std_logic_vector(31 downto 0);
 			--  WRITE CHANNEL
 			axi_write_address_o : out std_logic_vector(31 downto 0);
 			axi_write_init_o	: out std_logic;
@@ -56,13 +56,12 @@ begin
 			ce => ce,
          reset => reset,
          instr_ready_i => instr_ready_s,
-			data_ready_i => data_ready_s,
-			fencei_o => fencei_s,
+		 data_ready_i => data_ready_s,
+		 fencei_o => fencei_s,
+         pc_reg_o => pc_reg_o,
 
          instr_mem_read_i    => dread_instr_cache_s,
          instr_mem_address_o => addr_instr_cache_32_s,
-         --instr_mem_flush_o   => rst_instr_cache_s,
-         --instr_mem_en_o      => en_instr_cache_s,
 
          data_mem_we_o      => we_data_cache_s,
          data_mem_re_o      => re_data_cache_s,
@@ -81,13 +80,12 @@ begin
 	cc_nway: entity work.cache_contr_nway_vnv(behavioral)
 		port map(
 			clk => clk,
+			ce => ce,
 			reset => reset,
 			data_ready_o => data_ready_s,
 			instr_ready_o => instr_ready_s,
 			fencei_i => fencei_s,
-			pc_reg_o => pc_reg_o,
 			-- Interface with Main memory via AXI Full Master
-			axi_base_address_o => axi_base_address_o,
 			axi_write_address_o => axi_write_address_o,
 			axi_write_init_o	=> axi_write_init_o,
 			axi_write_data_o	=> axi_write_data_o,
@@ -111,11 +109,4 @@ begin
 --	Dummy ports so Vivado wouldn't "optimize" the entire design for now
 	--dread_instr <= dread_instr_cache_s;
 	--dread_data <= dread_data_cache_s;
-
--- Physical memory interface
-	addr_phy_o <= addr_phy_s;
-	dread_phy_s <= dread_phy_i;
-	dwrite_phy_o <= dwrite_phy_s;
-	we_phy_o <= we_phy_s;
-
 end architecture;

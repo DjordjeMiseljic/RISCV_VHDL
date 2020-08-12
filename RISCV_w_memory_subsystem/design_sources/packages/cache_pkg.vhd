@@ -11,14 +11,16 @@ package cache_pkg is
 	-- *************** CONSTANTS / PARAMETERS ***************
 
 	-- Physical adress size and width
-	constant PHY_ADDR_SPACE : integer := 512*1024*1024;
-	constant PHY_ADDR_WIDTH : integer := clogb2(PHY_ADDR_SPACE);
+	--constant PHY_ADDR_SPACE : integer := 512*1024*1024;
+	--constant PHY_ADDR_WIDTH : integer := clogb2(PHY_ADDR_SPACE);
+	constant PHY_ADDR_WIDTH : integer := 32;
+
 	-- "HIGH_PERFORMANCE" for higher clk speed and higher troughput
 	-- "LOW_LATENCY" for lower clk speed and low latency
 	constant TS_BRAM_TYPE : string := "HIGH_PERFORMANCE"; 
 	-- 
 	-- Block size in bytes, this can be changed, as long as it is power of 2
-	constant BLOCK_SIZE : integer := 32;
+	constant BLOCK_SIZE : integer := 64;
 	-- Number of bits needed to address all bytes inside the block
 	constant BLOCK_ADDR_WIDTH : integer := clogb2(BLOCK_SIZE);
 	-- Width of data bus
