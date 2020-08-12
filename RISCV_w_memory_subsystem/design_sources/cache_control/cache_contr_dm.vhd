@@ -57,9 +57,9 @@ architecture Behavioral of cache_contr_dm is
 
 	-- Instruction cache signals
 	signal addra_instr_cache_s : std_logic_vector((LVL1C_ADDR_WIDTH-3) downto 0); --(-2 bits because byte in 32-bit word is not adressible) 
-	signal dwritea_instr_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
-	signal dreada_instr_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
-	signal wea_instr_cache_s : std_logic_vector(LVL1C_NUM_COL-1 downto 0);
+	signal dwritea_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1-1 downto 0);
+	signal dreada_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1-1 downto 0);
+	signal wea_instr_cache_s : std_logic_vector(C_NUM_COL-1 downto 0);
 	signal ena_instr_cache_s : std_logic;
 	signal rsta_instr_cache_s : std_logic;
 	signal regcea_instr_cache_s : std_logic;
@@ -82,9 +82,9 @@ architecture Behavioral of cache_contr_dm is
 	-- Data cache signals
 	signal clk_data_cache_s : std_logic;
 	signal addra_data_cache_s : std_logic_vector((LVL1C_ADDR_WIDTH-3) downto 0); --(-2 bits because byte in 32-bit word is not adressible)
-	signal dwritea_data_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0);
-	signal dreada_data_cache_s : std_logic_vector(LVL1C_NUM_COL*LVL1C_COL_WIDTH-1 downto 0); 
-	signal wea_data_cache_s : std_logic_vector(LVL1C_NUM_COL-1 downto 0);
+	signal dwritea_data_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
+	signal dreada_data_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0); 
+	signal wea_data_cache_s : std_logic_vector(C_NUM_COL-1 downto 0);
 	signal ena_data_cache_s : std_logic; 
 	signal rsta_data_cache_s : std_logic; 
 	signal regcea_data_cache_s : std_logic;
@@ -111,17 +111,17 @@ architecture Behavioral of cache_contr_dm is
 	-- Level 2 cache signals
 	-- port A
 	signal addra_lvl2_cache_s : std_logic_vector((LVL2C_ADDR_WIDTH-3) downto 0); --(-2 bits because byte in 32-bit word is not adressible)
-	signal dwritea_lvl2_cache_s : std_logic_vector(LVL2C_NUM_COL*LVL2C_COL_WIDTH-1 downto 0);
-	signal dreada_lvl2_cache_s : std_logic_vector(LVL2C_NUM_COL*LVL2C_COL_WIDTH-1 downto 0);
-	signal wea_lvl2_cache_s : std_logic_vector(LVL2C_NUM_COL-1 downto 0);
+	signal dwritea_lvl2_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
+	signal dreada_lvl2_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
+	signal wea_lvl2_cache_s : std_logic_vector(C_NUM_COL-1 downto 0);
 	signal ena_lvl2_cache_s : std_logic;
 	signal rsta_lvl2_cache_s : std_logic;
 	signal regcea_lvl2_cache_s : std_logic;
 	-- port B
 	signal addrb_lvl2_cache_s : std_logic_vector((LVL2C_ADDR_WIDTH-3) downto 0);
-	signal dwriteb_lvl2_cache_s : std_logic_vector(LVL2C_NUM_COL*LVL2C_COL_WIDTH-1 downto 0);
-	signal dreadb_lvl2_cache_s : std_logic_vector(LVL2C_NUM_COL*LVL2C_COL_WIDTH-1 downto 0);
-	signal web_lvl2_cache_s : std_logic_vector(LVL2C_NUM_COL-1 downto 0);
+	signal dwriteb_lvl2_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
+	signal dreadb_lvl2_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
+	signal web_lvl2_cache_s : std_logic_vector(C_NUM_COL-1 downto 0);
 	signal enb_lvl2_cache_s : std_logic;
 	signal rstb_lvl2_cache_s : std_logic;
 	signal regceb_lvl2_cache_s : std_logic;
@@ -759,8 +759,8 @@ begin
 	-- Instantiation of instruction cache
 	instruction_cache : entity work.RAM_sp_ar_bw(rtl)
 		generic map (
-			NB_COL => LVL1C_NUM_COL,
-			COL_WIDTH => LVL1C_COL_WIDTH,
+			NB_COL => C_NUM_COL,
+			COL_WIDTH => C_COL_WIDTH,
 			RAM_DEPTH => LVL1C_DEPTH,
 			RAM_PERFORMANCE => "LOW_LATENCY",
 			INIT_FILE => "" 
@@ -816,8 +816,8 @@ begin
 	-- Instantiation of data cache
 	data_cache : entity work.RAM_sp_ar_bw(rtl)
 		generic map (
-				NB_COL => LVL1C_NUM_COL,
-				COL_WIDTH => LVL1C_COL_WIDTH,
+				NB_COL => C_NUM_COL,
+				COL_WIDTH => C_COL_WIDTH,
 				RAM_DEPTH => LVL1C_DEPTH,
 				RAM_PERFORMANCE => "LOW_LATENCY",
 				INIT_FILE => "" 
@@ -876,8 +876,8 @@ begin
 	-- Instantiation of level 2 cache
 	level_2_cache : entity work.RAM_tdp_rf_bw(rtl)
 		generic map (
-			NB_COL => LVL2C_NUM_COL,
-			COL_WIDTH => LVL2C_COL_WIDTH,
+			NB_COL => C_NUM_COL,
+			COL_WIDTH => C_COL_WIDTH,
 			RAM_DEPTH => LVL2C_DEPTH,
 			RAM_PERFORMANCE => "LOW_LATENCY",
 			INIT_FILE => "" 

@@ -13,16 +13,16 @@ entity cache_contr_nway_vnv is
 			fencei_i : in std_logic;
 			-- Interface with Main memory via AXI Full Master
 			-- Write channel
-			axi_write_address : out std_logic_vector(31 downto 0);
-			axi_write_init	: out std_logic;
-			axi_write_data	: out std_logic_vector(31 downto 0);
-			axi_write_next : in std_logic;
-			axi_write_done : in std_logic;
+			axi_write_address_o : out std_logic_vector(31 downto 0);
+			axi_write_init_o	: out std_logic;
+			axi_write_data_o	: out std_logic_vector(31 downto 0);
+			axi_write_next_i : in std_logic;
+			axi_write_done_i : in std_logic;
 			-- Read channel
-			axi_read_address : out std_logic_vector(31 downto 0);
-			axi_read_init	: out std_logic;
-			axi_read_data	: in std_logic_vector(31 downto 0);
-			axi_read_next : in std_logic
+			axi_read_address_o : out std_logic_vector(31 downto 0);
+			axi_read_init_o	: out std_logic;
+			axi_read_data_i	: in std_logic_vector(31 downto 0);
+			axi_read_next_i : in std_logic
 			-- Level 1 caches
 			-- Instruction cache
 			addr_instr_i 		: in std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
@@ -994,7 +994,7 @@ begin
 								lvl2a_c_idx_s, lvl2a_c_tag_s, lvl2a_c_hit_s, lvl2a_ts_bkk_s, lvl2a_ts_tag_s,
 								lvl2b_ts_tag_s, lvl2b_ts_bkk_s, lvl2b_ts_nbkk_s, dreadb_lvl2_cache_s,
 								lvl2_victim_index, lvl2_nextv_index, lvl2_rando_index, lvl2_invalid_found_s, lvl2_invalid_index,
-								axi_write_next, axi_write_done, axi_read_data, axi_read_next) is
+								axi_write_next_i, axi_write_done_i, axi_read_data_i, axi_read_next_i) is
 	begin
 		-- for FSM
 		mc_state_next <= idle;
@@ -1010,11 +1010,11 @@ begin
 		addrb_lvl2_tag_s <= lvl2a_c_idx_s; 
 
 		-- MEMORY interface signals (axi bus)
-		axi_write_address <= (others => '0');
-		axi_write_init	<= '0';
-		axi_write_data	<= (others => '0');
-		axi_read_address  <= (others => '0');
-		axi_read_init <= '0';
+		axi_write_address_o <= (others => '0');
+		axi_write_init_o	<= '0';
+		axi_write_data_o	<= (others => '0');
+		axi_read_address_o  <= (others => '0');
+		axi_read_init_o <= '0';
 
 		-- coherency
 		flush_lvl1d_s <= '0';
@@ -1032,10 +1032,13 @@ begin
 							mc_state_next <= flush; 
 							addrb_lvl2_tag_s <= lvl2a_c_idx_s;
 							addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_reg;
+							axi_write_address_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & COUNTER_MIN & "00";
+							axi_write_init <= '1';
 						when others => -- not initialized / valid but not dirty data
 							mc_state_next <= fetch;
 							addrb_lvl2_tag_s <= lvl2a_c_idx_s;
-							addr_phy_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & mc_counter_reg & "00";
+							axi_read_address_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & COUNTER_MIN & "00";
+							axi_read_init_o <= '1';
 							-- when evicting block, invalidate if block is in lvl1 data cache
 							if (lvl2a_ts_bkk_s(lvl2_victim_index)(LVL2C_BKK_DATA)='1')then 
 								invalidate_lvl1d_s <= '1';
@@ -1046,48 +1049,28 @@ begin
 							if (lvl2a_ts_bkk_s(lvl2_victim_index)(LVL2C_BKK_INSTR)='1')then 
 								invalidate_lvl1i_s <= '1';
 							end if;
-							-- NOTE CODE SEGMENT A taken from fetch state
-							dwriteb_lvl2_tag_s(lvl2_victim_index) <= "10" & "0001" & lvl2a_c_tag_s; 
-							web_lvl2_tag_s(lvl2_victim_index) <= '1';
-							-- NOTE NOTE check : use victim "10" instead of using nbkk_s
 					end case;
 				end if;
 
-			when flush =>
-				addr_phy_o <= lvl2b_ts_tag_s(lvl2_victim_index) & lvl2a_c_idx_s & mc_counter_reg & "00";
-				addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_incr;
-				dwrite_phy_o <= dreadb_lvl2_cache_s(lvl2_victim_index);
-				we_phy_o <= '1';
+			when fetch =>
+				axi_read_address_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & COUNTER_MIN & "00"; 
+				addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_reg;
+				dwriteb_lvl2_cache_s(lvl2_victim_index) <= axi_read_data;
 
-				mc_counter_next <= mc_counter_incr;
+				if(axi_read_next = '1') then
+					web_lvl2_cache_s(lvl2_victim_index) <= '1';
+					mc_counter_next <= mc_counter_incr;
+				else
+					web_lvl2_cache_s(lvl2_victim_index) <= '0';
+					mc_counter_next <= mc_counter_reg;
+				end if;
 
 				addrb_lvl2_tag_s <= lvl2a_c_idx_s;
-				if(mc_counter_reg = COUNTER_MIN)then  -- because of read first mode
-					-- invalidate so the next state after idle is fetch
-					dwriteb_lvl2_tag_s(lvl2_victim_index) <= 
-						lvl2b_ts_nbkk_s(lvl2_victim_index) & (lvl2b_ts_bkk_s(lvl2_victim_index) and "1100") & lvl2b_ts_tag_s(lvl2_victim_index); 
+
+				if(mc_counter_reg = COUNTER_ONE) then  -- because of the read first mode
+					dwriteb_lvl2_tag_s(lvl2_victim_index) <= "10" & "0001" & lvl2a_c_tag_s; 
 					web_lvl2_tag_s(lvl2_victim_index) <= '1';
 				end if;
-
-				if(mc_counter_reg = COUNTER_MAX)then 
-					mc_state_next <= idle;
-				else
-					mc_state_next <= flush;
-				end if;
-
-			when fetch =>
-				addr_phy_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & mc_counter_incr & "00";
-				addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_reg;
-				dwriteb_lvl2_cache_s(lvl2_victim_index) <= dread_phy_i;
-				web_lvl2_cache_s(lvl2_victim_index) <= '1';
-
-				mc_counter_next <= mc_counter_incr;
-
-				addrb_lvl2_tag_s <= lvl2a_c_idx_s;
-
-				--if(mc_counter_reg = COUNTER_MIN) then  -- because of the read first mode
-					-- NOTE code segment A was taken from here 
-				--end if;
 
 				if(mc_counter_reg = COUNTER_MAX)then 
 					mc_state_next <= idle;
@@ -1107,6 +1090,33 @@ begin
 					end if;
 				else
 					mc_state_next <= fetch;
+				end if;
+
+			when flush =>
+				axi_write_address_o <= lvl2b_ts_tag_s(lvl2_victim_index) & lvl2a_c_idx_s & COUNTER_MIN & "00";
+				axi_write_data_o <= dreadb_lvl2_cache_s(lvl2_victim_index);
+
+				if(axi_write_next_i = '1') then
+					mc_counter_next <= mc_counter_incr;
+					addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_incr;
+				else
+					mc_counter_next <= mc_counter_reg;
+					addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_reg;
+				end if;
+
+				addrb_lvl2_tag_s <= lvl2a_c_idx_s;
+
+				if(mc_counter_reg = COUNTER_ONE)then  -- because of read first mode
+					-- invalidate so the next state after idle is fetch
+					dwriteb_lvl2_tag_s(lvl2_victim_index) <= 
+						lvl2b_ts_nbkk_s(lvl2_victim_index) & (lvl2b_ts_bkk_s(lvl2_victim_index) and "1100") & lvl2b_ts_tag_s(lvl2_victim_index); 
+					web_lvl2_tag_s(lvl2_victim_index) <= '1';
+				end if;
+
+				if(mc_counter_reg = COUNTER_MAX and axi_write_done_i = '1')then 
+					mc_state_next <= idle;
+				else
+					mc_state_next <= flush;
 				end if;
 				
 			when others =>

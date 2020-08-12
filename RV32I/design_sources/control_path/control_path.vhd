@@ -8,6 +8,8 @@ entity control_path is
    port (
       -- global synchronization signals
       clk                : in  std_logic;
+      ce                : in  std_logic;
+
       instr_ready_i  : in  std_logic;
       data_ready_i   : in  std_logic;
       reset              : in  std_logic;

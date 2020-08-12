@@ -10,16 +10,16 @@ entity RISCV_w_cache is
 			reset : in std_logic;
 			pc_reg_o : out std_logic;
 			--  WRITE CHANNEL
-			axi_write_address : out std_logic_vector(31 downto 0);
-			axi_write_init	: out std_logic;
-			axi_write_data	: out std_logic_vector(31 downto 0);
-			axi_write_next : in std_logic;
-			axi_write_done : in std_logic;
+			axi_write_address_o : out std_logic_vector(31 downto 0);
+			axi_write_init_o	: out std_logic;
+			axi_write_data_o	: out std_logic_vector(31 downto 0);
+			axi_write_next_i : in std_logic;
+			axi_write_done_i : in std_logic;
 			-- READ CHANNEL
-			axi_read_address : out std_logic_vector(31 downto 0);
-			axi_read_init	: out std_logic;
-			axi_read_data	: in std_logic_vector(31 downto 0);
-			axi_read_next : in std_logic
+			axi_read_address_o : out std_logic_vector(31 downto 0);
+			axi_read_init_o	: out std_logic;
+			axi_read_data_i	: in std_logic_vector(31 downto 0);
+			axi_read_next_i : in std_logic
 
 			);
 end entity;
@@ -45,18 +45,6 @@ architecture Behavioral of RISCV_w_cache is
 	signal instr_ready_s : std_logic;
 	signal data_ready_s : std_logic;
 	signal fencei_s : std_logic;
-
-	-- Signals for AXI Master Inteface
-	signal axi_base_address_s : std_logic_vector(31 downto 0);
-	signal axi_write_address_s : std_logic_vector(31 downto 0);
-	signal axi_write_init_s	: std_logic;
-	signal axi_write_data_s : std_logic_vector(31 downto 0);
-	signal axi_write_next_s : std_logic;
-	signal axi_write_done_s : std_logic;
-	signal axi_read_address_s : std_logic_vector(31 downto 0);
-	signal axi_read_init_s	: std_logic;
-	signal axi_read_data_s	: std_logic_vector(31 downto 0);
-	signal axi_read_next_s : std_logic;
 
 begin
 
@@ -99,16 +87,16 @@ begin
 			fencei_i => fencei_s,
 			pc_reg_o => pc_reg_o,
 			-- Interface with Main memory via AXI Full Master
-			axi_base_address => axi_base_address_s,
-			axi_write_address => axi_write_address_s,
-			axi_write_init	=> axi_write_init_s,
-			axi_write_data	=> axi_write_data_s,
-			axi_write_next => axi_write_next_s,
-			axi_write_done => axi_write_done_s,
-			axi_read_address => axi_read_address_s,
-			axi_read_init	=> axi_read_init_s,
-			axi_read_data	=> axi_read_data_s,
-			axi_read_next => axi_read_next_s,
+			axi_base_address_o => axi_base_address_o,
+			axi_write_address_o => axi_write_address_o,
+			axi_write_init_o	=> axi_write_init_o,
+			axi_write_data_o	=> axi_write_data_o,
+			axi_write_next_i => axi_write_next_i,
+			axi_write_done_i => axi_write_done_i,
+			axi_read_address_o => axi_read_address_o,
+			axi_read_init_o	=> axi_read_init_o,
+			axi_read_data_i	=> axi_read_data_i,
+			axi_read_next_i => axi_read_next_i,
 			-- Instruction cache
 			addr_instr_i => addr_instr_cache_s,
 			dread_instr_o => dread_instr_cache_s,

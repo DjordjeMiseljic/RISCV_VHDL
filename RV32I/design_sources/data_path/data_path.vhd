@@ -9,6 +9,8 @@ entity data_path is
    port(
       -- global synchronization ports
       clk                 : in  std_logic;
+      ce                 : in  std_logic;
+      pc_reg_o : out std_logic_vector (31 downto 0);
       instr_ready_i   		: in  std_logic;
       data_ready_i    : in  std_logic;
       reset               : in  std_logic;
