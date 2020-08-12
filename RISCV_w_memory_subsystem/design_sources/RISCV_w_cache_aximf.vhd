@@ -6,12 +6,21 @@ use work.cache_pkg.all;
 
 entity RISCV_w_cache is
 	port (clk : in std_logic;
+			ce : in std_logic;
 			reset : in std_logic;
-			-- NOTE Just for test bench, to simulate real memory
-			addr_phy_o 		: out std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
-			dread_phy_i 	: in std_logic_vector(31 downto 0);
-			dwrite_phy_o	: out std_logic_vector(31 downto 0);
-         we_phy_o			: out std_logic
+			pc_reg_o : out std_logic;
+			--  WRITE CHANNEL
+			axi_write_address : out std_logic_vector(31 downto 0);
+			axi_write_init	: out std_logic;
+			axi_write_data	: out std_logic_vector(31 downto 0);
+			axi_write_next : in std_logic;
+			axi_write_done : in std_logic;
+			-- READ CHANNEL
+			axi_read_address : out std_logic_vector(31 downto 0);
+			axi_read_init	: out std_logic;
+			axi_read_data	: in std_logic_vector(31 downto 0);
+			axi_read_next : in std_logic
+
 			);
 end entity;
 
@@ -36,36 +45,37 @@ architecture Behavioral of RISCV_w_cache is
 	signal instr_ready_s : std_logic;
 	signal data_ready_s : std_logic;
 	signal fencei_s : std_logic;
-	signal ce_s	: std_logic;
-	signal pc_reg_s : std_logic_vector(31 downto 0);
 
-
-	-- NOTE Just for test bench, to simulate real memory, additional signals needed
-	signal addr_phy_s 		: std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
-	signal dread_phy_s 	: std_logic_vector(31 downto 0);
-	signal dwrite_phy_s		: std_logic_vector(31 downto 0);
-	signal we_phy_s			: std_logic;
-
+	-- Signals for AXI Master Inteface
+	signal axi_base_address_s : std_logic_vector(31 downto 0);
+	signal axi_write_address_s : std_logic_vector(31 downto 0);
+	signal axi_write_init_s	: std_logic;
+	signal axi_write_data_s : std_logic_vector(31 downto 0);
+	signal axi_write_next_s : std_logic;
+	signal axi_write_done_s : std_logic;
+	signal axi_read_address_s : std_logic_vector(31 downto 0);
+	signal axi_read_init_s	: std_logic;
+	signal axi_read_data_s	: std_logic_vector(31 downto 0);
+	signal axi_read_next_s : std_logic;
 
 begin
 
-	ce_s <= '1';
 	--********** PROCESSOR CORE **************
 	-- Top Moule - RISCV processsor core instance
    TOP_RISCV_1 : entity work.TOP_RISCV
       port map (
          clk => clk,
-         ce => ce_s,
+			ce => ce,
          reset => reset,
          instr_ready_i => instr_ready_s,
 			data_ready_i => data_ready_s,
 			fencei_o => fencei_s,
-			pc_reg_o => pc_reg_s,
 
          instr_mem_read_i    => dread_instr_cache_s,
          instr_mem_address_o => addr_instr_cache_32_s,
          --instr_mem_flush_o   => rst_instr_cache_s,
          --instr_mem_en_o      => en_instr_cache_s,
+
          data_mem_we_o      => we_data_cache_s,
          data_mem_re_o      => re_data_cache_s,
          data_mem_address_o => addr_data_cache_32_s,
@@ -87,11 +97,18 @@ begin
 			data_ready_o => data_ready_s,
 			instr_ready_o => instr_ready_s,
 			fencei_i => fencei_s,
-			-- NOTE Just for test bench, to simulate real memory
-			addr_phy_o => addr_phy_s,
-			dread_phy_i => dread_phy_s,
-			dwrite_phy_o => dwrite_phy_s,
-			we_phy_o => we_phy_s,
+			pc_reg_o => pc_reg_o,
+			-- Interface with Main memory via AXI Full Master
+			axi_base_address => axi_base_address_s,
+			axi_write_address => axi_write_address_s,
+			axi_write_init	=> axi_write_init_s,
+			axi_write_data	=> axi_write_data_s,
+			axi_write_next => axi_write_next_s,
+			axi_write_done => axi_write_done_s,
+			axi_read_address => axi_read_address_s,
+			axi_read_init	=> axi_read_init_s,
+			axi_read_data	=> axi_read_data_s,
+			axi_read_next => axi_read_next_s,
 			-- Instruction cache
 			addr_instr_i => addr_instr_cache_s,
 			dread_instr_o => dread_instr_cache_s,

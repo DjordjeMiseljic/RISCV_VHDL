@@ -7,11 +7,13 @@ entity TOP_RISCV is
    port(
       -- Synchronization ports
       clk                 : in  std_logic;
+      ce 			   	  : in  std_logic;
       reset               : in  std_logic;
       instr_ready_i   	  : in  std_logic;
       data_ready_i    	  : in  std_logic;
       fencei_o    		  : out  std_logic;
-		
+		-- Program counter out to see flow of program 
+      pc_reg_o 			: out std_logic_vector(31 downto 0);
       -- Instruction memory interface
       instr_mem_address_o : out std_logic_vector(31 downto 0);
       instr_mem_read_i    : in  std_logic_vector(31 downto 0);
@@ -55,6 +57,7 @@ begin
       port map (
          -- global synchronization signals
          clk                 => clk,
+			ce 					=> ce,
          instr_ready_i   => instr_ready_i,
          data_ready_i    => data_ready_i,
          reset               => reset,
@@ -84,6 +87,7 @@ begin
          if_id_flush_i       => if_id_flush_s,
          id_ex_flush_i       => id_ex_flush_s,
          -- control signals for stalling
+         pc_reg_o             => pc_reg_o,
          pc_en_i             => pc_en_s,
          if_id_en_i          => if_id_en_s); 
 
@@ -98,6 +102,7 @@ begin
       port map (
          -- global synchronization signals
          clk                 => clk,
+			ce 					=> ce,
          instr_ready_i   => instr_ready_i,
          data_ready_i    => data_ready_i,
          reset               => reset,

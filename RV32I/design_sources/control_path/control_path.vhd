@@ -177,7 +177,7 @@ begin
 				rd_address_ex_s  <= (others => '0');
 				rd_we_ex_s       <= '0';
 				data_mem_we_ex_s <= '0';
-			elsif(data_ready_i = '1' and instr_ready_i = '1')then
+			elsif(data_ready_i = '1' and instr_ready_i = '1' and ce = '1')then
 				branch_type_ex_s <= branch_type_id_s;
 				funct7_ex_s      <= funct7_id_s;
 				funct3_ex_s      <= funct3_id_s;
@@ -205,7 +205,7 @@ begin
 				rd_we_mem_s       <= '0';
 				mem_to_reg_mem_s  <= (others => '0');
 				rd_address_mem_s  <= (others => '0');
-			elsif (data_ready_i = '1' and instr_ready_i = '1')then
+			elsif (data_ready_i = '1' and instr_ready_i = '1' and ce = '1')then
 				funct3_mem_s      <= funct3_ex_s;
 				data_mem_we_mem_s <= data_mem_we_ex_s;
 				rd_we_mem_s       <= rd_we_ex_s;
@@ -224,7 +224,7 @@ begin
             rd_we_wb_s      <= '0';
             mem_to_reg_wb_s <= (others => '0');
             rd_address_wb_s <= (others => '0');
-         else
+         elsif (ce = '1') then
             funct3_wb_s     <= funct3_mem_s;
             rd_we_wb_s      <= rd_we_mem_s;
             mem_to_reg_wb_s <= mem_to_reg_mem_s;

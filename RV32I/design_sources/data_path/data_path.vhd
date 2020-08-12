@@ -100,7 +100,7 @@ begin
       if (rising_edge(clk)) then
          if (reset = '0')then
             pc_reg_if_s <= (others => '0');
-         elsif (pc_en_i = '1' and instr_ready_i = '1' and data_ready_i = '1') then
+         elsif (pc_en_i = '1' and instr_ready_i = '1' and data_ready_i = '1' and ce = '1') then
 				pc_reg_if_s <= pc_next_if_s;
          end if;
       end if;
@@ -117,11 +117,11 @@ begin
    if_id : process (clk) is
    begin
       if (rising_edge(clk)) then 
-			if (reset = '0' or (if_id_flush_i = '1' and data_ready_i = '1' and instr_ready_i ='1'))then
+			if (reset = '0' or (if_id_flush_i = '1' and data_ready_i = '1' and instr_ready_i ='1')) then
 				pc_reg_id_s   <= (others => '0');
 				pc_adder_id_s <= (others => '0');
 				instr_mem_id_s <= (others => '0');
-			elsif (if_id_en_i = '1' and data_ready_i = '1' and instr_ready_i ='1')then
+			elsif (if_id_en_i = '1' and data_ready_i = '1' and instr_ready_i ='1' and ce = '1') then
 				pc_reg_id_s   <= pc_reg_if_s;
 				pc_adder_id_s <= pc_adder_if_s;
 				instr_mem_id_s <= instr_mem_read_i;
@@ -133,13 +133,13 @@ begin
    id_ex : process (clk) is
    begin
       if (rising_edge(clk)) then
-			if (reset = '0' or (id_ex_flush_i = '1' and data_ready_i = '1' and instr_ready_i = '1'))then
+			if (reset = '0' or (id_ex_flush_i = '1' and data_ready_i = '1' and instr_ready_i = '1')) then
 				pc_adder_ex_s           <= (others => '0');
 				rs1_data_ex_s           <= (others => '0');
 				rs2_data_ex_s           <= (others => '0');
 				immediate_extended_ex_s <= (others => '0');
 				rd_address_ex_s         <= (others => '0');
-			elsif (data_ready_i = '1' and instr_ready_i = '1')then
+			elsif (data_ready_i = '1' and instr_ready_i = '1' and ce = '1') then
 				pc_adder_ex_s           <= pc_adder_id_s;
 				rs1_data_ex_s           <= rs1_data_id_s;
 				rs2_data_ex_s           <= rs2_data_id_s;
@@ -159,7 +159,7 @@ begin
 				pc_adder_mem_s   <= (others => '0');
 				rd_address_mem_s <= (others => '0');
 				pc_reg_ex_s      <= (others => '0');
-			elsif (data_ready_i = '1' and instr_ready_i = '1')then
+			elsif (data_ready_i = '1' and instr_ready_i = '1' and ce = '1') then
 				alu_result_mem_s <= alu_result_ex_s;
 				rs2_data_mem_s   <= alu_forward_b_ex_s;
 				pc_adder_mem_s   <= pc_adder_ex_s;
@@ -173,12 +173,12 @@ begin
    mem_wb : process (clk) is
    begin
       if (rising_edge(clk)) then
-         if (reset = '0' or data_ready_i = '0')then
+         if (reset = '0' or data_ready_i = '0') then
 				data_mem_wb_s <= (others => '0');
             alu_result_wb_s <= (others => '0');
             pc_adder_wb_s   <= (others => '0');
             rd_address_wb_s <= (others => '0');
-         else
+         elsif (ce = '1') then
 				data_mem_wb_s <= data_mem_read_i;
             alu_result_wb_s <= alu_result_mem_s;
             pc_adder_wb_s   <= pc_adder_mem_s;
@@ -286,7 +286,8 @@ begin
    --To data memory
    data_mem_address_o  <= alu_result_mem_s;
    data_mem_write_o    <= rs2_data_mem_s;
-
+	-- For system level debug and control
+	pc_reg_o <=pc_reg_if_s;
 end architecture;
 
 

@@ -4,9 +4,12 @@ use ieee.numeric_std.all;
 use std.textio.all;
 use work.cache_pkg.all;
 
-entity RISCV_w_cache is
+entity caching_subsystem_only is
 	port (clk : in std_logic;
 			reset : in std_logic;
+			-- just for timing
+			instr_o	: out std_logic_vector(31 downto 0);
+			data_o	: out std_logic_vector(31 downto 0);
 			-- NOTE Just for test bench, to simulate real memory
 			addr_phy_o 		: out std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
 			dread_phy_i 	: in std_logic_vector(31 downto 0);
@@ -15,7 +18,7 @@ entity RISCV_w_cache is
 			);
 end entity;
 
-architecture Behavioral of RISCV_w_cache is
+architecture Behavioral of caching_subsystem_only is
 
    -- Instruction cache signals
 	signal addr_instr_cache_s : std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
@@ -36,8 +39,6 @@ architecture Behavioral of RISCV_w_cache is
 	signal instr_ready_s : std_logic;
 	signal data_ready_s : std_logic;
 	signal fencei_s : std_logic;
-	signal ce_s	: std_logic;
-	signal pc_reg_s : std_logic_vector(31 downto 0);
 
 
 	-- NOTE Just for test bench, to simulate real memory, additional signals needed
@@ -46,33 +47,42 @@ architecture Behavioral of RISCV_w_cache is
 	signal dwrite_phy_s		: std_logic_vector(31 downto 0);
 	signal we_phy_s			: std_logic;
 
+	-- DUMMY SINGALS
+	signal counter1_next,counter1_reg : std_logic_vector(31 downto 0);
+	signal counter2_next,counter2_reg : std_logic_vector(31 downto 0);
+	signal counter3_next,counter3_reg : std_logic_vector(31 downto 0);
 
 begin
 
-	ce_s <= '1';
-	--********** PROCESSOR CORE **************
-	-- Top Moule - RISCV processsor core instance
-   TOP_RISCV_1 : entity work.TOP_RISCV
-      port map (
-         clk => clk,
-         ce => ce_s,
-         reset => reset,
-         instr_ready_i => instr_ready_s,
-			data_ready_i => data_ready_s,
-			fencei_o => fencei_s,
-			pc_reg_o => pc_reg_s,
+	--********** FAKE PROCESSOR CORE FOR TIMING ANALYSIS**************
 
-         instr_mem_read_i    => dread_instr_cache_s,
-         instr_mem_address_o => addr_instr_cache_32_s,
-         --instr_mem_flush_o   => rst_instr_cache_s,
-         --instr_mem_en_o      => en_instr_cache_s,
-         data_mem_we_o      => we_data_cache_s,
-         data_mem_re_o      => re_data_cache_s,
-         data_mem_address_o => addr_data_cache_32_s,
-         data_mem_read_i    => dread_data_cache_s,
-         data_mem_write_o   => dwrite_data_cache_s);
+	instr_o <= dread_instr_cache_s;
+	data_o <= dread_data_cache_s;
 
+	addr_instr_cache_32_s <= counter1_reg;
+	we_data_cache_s <= counter3_reg(4 downto 1);
+	re_data_cache_s <= counter3_reg(0);
+	addr_data_cache_32_s <= counter2_reg;
+	dwrite_data_cache_s <= counter3_reg;
+	fencei_s <= counter3_reg(10);
 
+	garbage : process(clk)is
+	begin
+		if(rising_edge(clk))then
+			if(reset= '0')then
+				counter1_reg <= (others=>'0');
+				counter2_reg <= (others=>'0');
+				counter3_reg <= (others=>'0');
+			else
+				counter1_reg <= counter1_next;
+				counter2_reg <= counter2_next;
+				counter3_reg <= counter3_next;
+			end if;
+		end if;
+	end process;
+	counter1_next <= std_logic_vector(unsigned(counter1_reg) + to_unsigned(4,PHY_ADDR_WIDTH));
+	counter2_next <= std_logic_vector(unsigned(counter2_reg) + to_unsigned(3,PHY_ADDR_WIDTH));
+	counter3_next <= std_logic_vector(unsigned(counter3_reg) + to_unsigned(1,PHY_ADDR_WIDTH));
 
 	-- Convert 32 bit adress to exact size based on CACHE SIZE parameter
 	addr_data_cache_s <= addr_data_cache_32_s((PHY_ADDR_WIDTH-1) downto 0);
