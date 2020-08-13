@@ -33,14 +33,15 @@ entity RISCV_w_cache is
 end entity;
 
 architecture Behavioral of RISCV_w_cache is
-
+    constant C_NUM_COL : integer := 4; -- fixed, word is 4 bytes
+	constant C_COL_WIDTH : integer := 8; -- fixed, byte is 8 bits
    -- Instruction cache signals
-	signal addr_instr_cache_s : std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+	signal addr_instr_cache_s : std_logic_vector(C_PHY_ADDR_WIDTH-1 downto 0);
 	signal addr_instr_cache_32_s : std_logic_vector(31 downto 0);
 	signal dread_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
 
 	-- Data cache signals
-	signal addr_data_cache_s : std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+	signal addr_data_cache_s : std_logic_vector(C_PHY_ADDR_WIDTH-1 downto 0);
 	signal addr_data_cache_32_s : std_logic_vector(31 downto 0);
 	signal dwrite_data_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
 	signal dread_data_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0); 
@@ -80,8 +81,8 @@ begin
 
 
 	-- Convert 32 bit adress to exact size based on CACHE SIZE parameter
-	addr_data_cache_s <= addr_data_cache_32_s((PHY_ADDR_WIDTH-1) downto 0);
-	addr_instr_cache_s <= addr_instr_cache_32_s((PHY_ADDR_WIDTH-1) downto 0);
+	addr_data_cache_s <= addr_data_cache_32_s((C_PHY_ADDR_WIDTH-1) downto 0);
+	addr_instr_cache_s <= addr_instr_cache_32_s((C_PHY_ADDR_WIDTH-1) downto 0);
 
 	--********** Memory subsystem **************
 	-- 2 levels of caches + required controllers
@@ -93,7 +94,7 @@ begin
 			C_LVL1_CACHE_SIZE => C_LVL1_CACHE_SIZE,
 			C_LVL2_CACHE_SIZE => C_LVL2_CACHE_SIZE,
 			C_LVL2C_ASSOCIATIVITY => C_LVL2C_ASSOCIATIVITY
-		);
+		)
 		port map(
 			clk => clk,
 			ce => ce,

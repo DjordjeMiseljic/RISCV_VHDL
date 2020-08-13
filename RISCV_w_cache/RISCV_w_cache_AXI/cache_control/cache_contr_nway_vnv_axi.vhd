@@ -34,10 +34,10 @@ entity cache_contr_nway_vnv is
 			axi_read_next_i : in std_logic;
 			-- Level 1 caches
 			-- Instruction cache
-			addr_instr_i 		: in std_logic_vector(clogb2(PHY_ADDR_SPACE)-1 downto 0);
+			addr_instr_i 		: in std_logic_vector(C_PHY_ADDR_WIDTH-1 downto 0);
 			dread_instr_o 		: out std_logic_vector(31 downto 0);
 			-- Data cache
-			addr_data_i			: in std_logic_vector(clogb2(PHY_ADDR_SPACE)-1 downto 0);
+			addr_data_i			: in std_logic_vector(C_PHY_ADDR_WIDTH-1 downto 0);
 			dread_data_o 		: out std_logic_vector(31 downto 0);
 			dwrite_data_i		: in std_logic_vector(31 downto 0);
          we_data_i			: in std_logic_vector(3 downto 0);

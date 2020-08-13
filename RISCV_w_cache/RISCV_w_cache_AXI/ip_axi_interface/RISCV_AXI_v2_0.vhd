@@ -6,11 +6,16 @@ use work.cache_pkg.all;
 entity RISCV_AXI_v2_0 is
 	generic (
 		-- Users to add parameters here
-
+        C_PHY_ADDR_WIDTH : integer := 32;
+		C_TS_BRAM_TYPE : string := "HIGH_PERFORMANCE"; 
+		C_BLOCK_SIZE : integer := 64;
+		C_LVL1_CACHE_SIZE : integer := 1024*1;  -- 1KB
+		C_LVL2_CACHE_SIZE : integer := 1024*4;  -- 4KB
+		C_LVL2C_ASSOCIATIVITY : natural := 4;
 		-- User parameters ends
 		-- Do not modify the parameters beyond this line
 
-
+        
 		-- Parameters of Axi Slave Bus Interface AXIL_S
 		C_AXIL_S_DATA_WIDTH	: integer	:= 32;
 		C_AXIL_S_ADDR_WIDTH	: integer	:= 4;
@@ -105,7 +110,7 @@ entity RISCV_AXI_v2_0 is
 end RISCV_AXI_v2_0;
 
 architecture arch_imp of RISCV_AXI_v2_0 is
-        constant C_AXIF_M_BURST_LEN : integer := BLOCK_SIZE / 4;
+        constant C_AXIF_M_BURST_LEN : integer := C_BLOCK_SIZE / 4;
 		
 		signal axi_base_address_s : std_logic_vector(31 downto 0);
 		signal axi_write_address_s : std_logic_vector(31 downto 0);
@@ -227,6 +232,14 @@ RISCV_AXI_v2_0_AXIF_M_inst : entity work.RISCV_AXI_v2_0_AXIF_M
 
 	-- Add user logic here
 RISCV_HART :entity work.RISCV_w_cache(Behavioral)
+	generic map(
+		C_PHY_ADDR_WIDTH => C_PHY_ADDR_WIDTH,
+		C_TS_BRAM_TYPE  => C_TS_BRAM_TYPE,
+		C_BLOCK_SIZE  => C_BLOCK_SIZE,
+		C_LVL1_CACHE_SIZE => C_LVL1_CACHE_SIZE,
+		C_LVL2_CACHE_SIZE => C_LVL2_CACHE_SIZE,
+		C_LVL2C_ASSOCIATIVITY => C_LVL2C_ASSOCIATIVITY
+	)
 	port map(clk => axif_m_aclk,
 			ce => ce_s,
 			reset => axif_m_aresetn,
