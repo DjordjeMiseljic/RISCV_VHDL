@@ -112,6 +112,9 @@ architecture Behavioral of cache_contr_nway_vnv is
 	signal rstb_lvl2_tag_s : std_logic;
 	signal web_lvl2_tag_s : lvl2_we_ts_t;
 	signal regceb_lvl2_tag_s : std_logic;
+	-- AXI support signals
+	signal axi_read_address_s : std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+	signal axi_write_address_s : std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
 --*******************************************************************************************
 
 
@@ -849,8 +852,8 @@ begin
 						wea_lvl2_cache_s(lvl2_hit_index)<= '0';
 					end if;
 				else
-						wea_lvl2_cache_s(lvl2_hit_index)<= '1';
-						cc_counter_next <= cc_counter_incr;
+					wea_lvl2_cache_s(lvl2_hit_index)<= '1';
+					cc_counter_next <= cc_counter_incr;
 				end if;
 				-- this is needed because fetching in cc and mc are overlapped
 				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
@@ -890,8 +893,8 @@ begin
 					end if;
 
 				else
-						wea_lvl2_cache_s(lvl2_dflush_index) <= '1';
-						cc_counter_next <= cc_counter_incr;
+					wea_lvl2_cache_s(lvl2_dflush_index) <= '1';
+					cc_counter_next <= cc_counter_incr;
 				end if;
 
 				-- this is needed because fetching in cc and mc are overlapped
@@ -1003,18 +1006,8 @@ begin
 
 
 
-   -- AXI INTERFACE
-	-- Write channel
-	--axi_write_address : out std_logic_vector(31 downto 0);
-	--axi_write_init	: out std_logic;
-	--axi_write_data	: out std_logic_vector(31 downto 0);
-	--axi_write_next : in std_logic;
-	--axi_write_done : in std_logic;
-	-- Read channel
-	--axi_read_address : out std_logic_vector(31 downto 0);
-	--axi_read_init	: out std_logic;
-	--axi_read_data	: in std_logic_vector(31 downto 0);
-	--axi_read_next : in std_logic
+	axi_write_address_o  <= std_logic_vector(to_unsigned(0,32 - PHY_ADDR_WIDTH)) & axi_write_address_s;
+	axi_read_address_o   <= std_logic_vector(to_unsigned(0,32 - PHY_ADDR_WIDTH)) & axi_read_address_s;
 	-- Memory controller
 	-- FSM that controls communication between lvl2 cache and main memory (DDR RAM)
 	mc_fsm_proc : process(mc_state_reg, mc_counter_reg, mc_counter_incr, check_lvl2_s,
@@ -1037,10 +1030,10 @@ begin
 		addrb_lvl2_tag_s <= lvl2a_c_idx_s; 
 
 		-- MEMORY interface signals (axi bus)
-		axi_write_address_o <= (others => '0');
+		axi_write_address_s <= (others => '0');
 		axi_write_init_o	<= '0';
 		axi_write_data_o	<= (others => '0');
-		axi_read_address_o  <= (others => '0');
+		axi_read_address_s  <= (others => '0');
 		axi_read_init_o <= '0';
 
 		-- coherency
@@ -1059,12 +1052,12 @@ begin
 							mc_state_next <= flush; 
 							addrb_lvl2_tag_s <= lvl2a_c_idx_s;
 							addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_reg;
-							axi_write_address_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & COUNTER_MIN & "00";
+							axi_write_address_s <= lvl2a_c_tag_s & lvl2a_c_idx_s & COUNTER_MIN & "00";
 							axi_write_init_o <= '1';
 						when others => -- not initialized / valid but not dirty data
 							mc_state_next <= fetch;
 							addrb_lvl2_tag_s <= lvl2a_c_idx_s;
-							axi_read_address_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & COUNTER_MIN & "00";
+							axi_read_address_s <= lvl2a_c_tag_s & lvl2a_c_idx_s & COUNTER_MIN & "00";
 							axi_read_init_o <= '1';
 							-- when evicting block, invalidate if block is in lvl1 data cache
 							if (lvl2a_ts_bkk_s(lvl2_victim_index)(LVL2C_BKK_DATA)='1')then 
@@ -1080,7 +1073,7 @@ begin
 				end if;
 
 			when fetch =>
-				axi_read_address_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & COUNTER_MIN & "00"; 
+				axi_read_address_s <= lvl2a_c_tag_s & lvl2a_c_idx_s & COUNTER_MIN & "00"; 
 				addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_reg;
 				dwriteb_lvl2_cache_s(lvl2_victim_index) <= axi_read_data_i;
 
@@ -1119,14 +1112,13 @@ begin
 				end if;
 
 			when flush =>
-				axi_write_address_o <= lvl2b_ts_tag_s(lvl2_victim_index) & lvl2a_c_idx_s & COUNTER_MIN & "00";
+				axi_write_address_s <= lvl2b_ts_tag_s(lvl2_victim_index) & lvl2a_c_idx_s & COUNTER_MIN & "00";
 				axi_write_data_o <= dreadb_lvl2_cache_s(lvl2_victim_index);
 
 				if(axi_write_next_i = '1') then
 					mc_counter_next <= mc_counter_incr;
 					addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_incr;
 				else
-					mc_counter_next <= mc_counter_reg;
 					addrb_lvl2_cache_s(lvl2_victim_index) <= lvl2a_c_idx_s & mc_counter_reg;
 				end if;
 
