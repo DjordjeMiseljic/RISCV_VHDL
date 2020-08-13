@@ -838,6 +838,20 @@ begin
 				addra_data_cache_s <= lvl1ia_c_idx_s & cc_counter_reg;
 				lvl1_valid_s <= '0';
 
+				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
+				-- *** HIGH PERFORMANCE IMPLEMENTATION***
+					if(bram_read_rdy_reg = '1') then
+						bram_read_rdy_next<='1';
+						wea_lvl2_cache_s(lvl2_hit_index)<= '1';
+						cc_counter_next <= cc_counter_incr;
+					else
+						bram_read_rdy_next<='1';
+						wea_lvl2_cache_s(lvl2_hit_index)<= '0';
+					end if;
+				else
+						wea_lvl2_cache_s(lvl2_hit_index)<= '1';
+						cc_counter_next <= cc_counter_incr;
+				end if;
 				-- this is needed because fetching in cc and mc are overlapped
 				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
 
@@ -864,13 +878,25 @@ begin
 				addra_lvl2_cache_s(lvl2_dflush_index) <= lvl2dl_c_idx_s & cc_counter_reg;
 				addra_data_cache_s <= lvl1da_c_idx_s & cc_counter_reg;
 
+				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then
+				-- *** HIGH PERFORMANCE IMPLEMENTATION***
+					if(bram_read_rdy_reg = '1') then
+						bram_read_rdy_next<='1';
+						wea_lvl2_cache_s(lvl2_dflush_index) <= '1';
+						cc_counter_next <= cc_counter_incr;
+					else
+						bram_read_rdy_next<='1';
+						wea_lvl2_cache_s(lvl2_dflush_index) <= '0';
+					end if;
+
+				else
+						wea_lvl2_cache_s(lvl2_dflush_index) <= '1';
+						cc_counter_next <= cc_counter_incr;
+				end if;
+
 				-- this is needed because fetching in cc and mc are overlapped
 				addra_lvl2_tag_s <= lvl2dl_c_idx_s;
-
 				dwritea_lvl2_cache_s(lvl2_dflush_index) <= dreada_data_cache_s;
-				wea_lvl2_cache_s(lvl2_dflush_index)<= '1';
-
-				cc_counter_next <= cc_counter_incr;
 
 				if(cc_counter_reg = COUNTER_MAX)then 
 					-- finished with writing entire block
@@ -1063,7 +1089,6 @@ begin
 					mc_counter_next <= mc_counter_incr;
 				else
 					web_lvl2_cache_s(lvl2_victim_index) <= '0';
-					mc_counter_next <= mc_counter_reg;
 				end if;
 
 				addrb_lvl2_tag_s <= lvl2a_c_idx_s;

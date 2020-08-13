@@ -24,10 +24,11 @@ addi a1, a1, 4 # increase iterator (counts bytes to get to a block)
 beq a1, a2, einner2
 jal inner2
 ## TESTING FLUSHES (EVICTION of DIRTY blocks, and set trashing N-WAY)
-einner2: lui a5, 1
-slli a5, a5, 5
-lui a6, 1
-outer3: slli a6, a6, 1
+einner2: li a5, 5
+slli a5, a5, 12
+li a3 1
+outer3: addi a3, a3, 1
+slli a6, a3, 12
 addi a0, a6, 0
 li a1, 0
 li a2, 64
@@ -40,6 +41,5 @@ einner3: beq a5, a6 eouter3
 jal outer3
 ## TESTING FLUSHES (EVICTION of DIRTY blocks)
 eouter3:nop
-lui a6, 1
-slli a6, a6, 1
+li a3 1
 jal outer3
