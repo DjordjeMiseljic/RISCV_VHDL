@@ -102,7 +102,6 @@ init_platform()
     /* psu_init();*/
     Xil_ICacheDisable();
     Xil_DCacheDisable();
-
     init_uart();
 }
 
