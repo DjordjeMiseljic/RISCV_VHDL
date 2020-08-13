@@ -5,6 +5,14 @@ use std.textio.all;
 use work.cache_pkg.all;
 
 entity cache_contr_nway_vnv is
+	generic (
+			C_PHY_ADDR_WIDTH : integer := 32;
+			C_TS_BRAM_TYPE : string := "HIGH_PERFORMANCE"; 
+			C_BLOCK_SIZE : integer := 64;
+			C_LVL1_CACHE_SIZE : integer := 1024*1;  -- 1KB
+			C_LVL2_CACHE_SIZE : integer := 1024*4;  -- 4KB
+			C_LVL2C_ASSOCIATIVITY : natural := 4
+	);
 	port (clk : in std_logic;
 			ce : in std_logic;
 			reset : in std_logic;
@@ -26,10 +34,10 @@ entity cache_contr_nway_vnv is
 			axi_read_next_i : in std_logic;
 			-- Level 1 caches
 			-- Instruction cache
-			addr_instr_i 		: in std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+			addr_instr_i 		: in std_logic_vector(clogb2(PHY_ADDR_SPACE)-1 downto 0);
 			dread_instr_o 		: out std_logic_vector(31 downto 0);
 			-- Data cache
-			addr_data_i			: in std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+			addr_data_i			: in std_logic_vector(clogb2(PHY_ADDR_SPACE)-1 downto 0);
 			dread_data_o 		: out std_logic_vector(31 downto 0);
 			dwrite_data_i		: in std_logic_vector(31 downto 0);
          we_data_i			: in std_logic_vector(3 downto 0);
@@ -38,6 +46,71 @@ entity cache_contr_nway_vnv is
 end entity;
 
 architecture Behavioral of cache_contr_nway_vnv is
+	-- CONSTANTS, derived from generics
+	--*******************************************************************************************
+	-- Physical adress size and width
+	-- if physical address space is 500MB, phy address width can be 29
+	constant PHY_ADDR_WIDTH : integer := C_PHY_ADDR_WIDTH;
+	--constant PHY_ADDR_WIDTH : integer := 32;
+
+	-- "HIGH_PERFORMANCE" for higher clk speed and higher troughput
+	-- "LOW_LATENCY" for lower clk speed and low latency
+	constant TS_BRAM_TYPE : string := C_TS_BRAM_TYPE;
+	-- Block size in bytes, this can be changed, as long as it is power of 2
+	constant BLOCK_SIZE : integer := C_BLOCK_SIZE;
+	-- Number of bits needed to address all bytes inside the block
+	constant BLOCK_ADDR_WIDTH : integer := clogb2(BLOCK_SIZE);
+	-- Width of data bus
+	constant C_NUM_COL : integer := 4; -- fixed, word is 4 bytes
+	constant C_COL_WIDTH : integer := 8; -- fixed, byte is 8 bits
+
+	-- Basic Level 1 cache parameters:
+	-- This will be size of both instruction and data caches in bytes
+	constant LVL1_CACHE_SIZE : integer := C_LVL1_CACHE_SIZE;
+	-- Derived cache parameters:
+	-- Number of blocks in cache
+	constant LVL1C_NB_BLOCKS : integer := LVL1_CACHE_SIZE/BLOCK_SIZE; 
+	-- Cache depth - number of words in cache - size in bytes divided by word size in bytes
+	constant LVL1C_DEPTH : integer := LVL1_CACHE_SIZE/4; 
+	-- Number of bits needed to address all bytes inside the cache
+	constant LVL1C_ADDR_WIDTH : integer := clogb2(LVL1_CACHE_SIZE);
+	-- Number of bits needed to address all blocks inside the cache
+	constant LVL1C_INDEX_WIDTH : integer := LVL1C_ADDR_WIDTH - BLOCK_ADDR_WIDTH;
+	-- Number of bits needed to represent which block is currently in cache
+	constant LVL1C_TAG_WIDTH : integer := PHY_ADDR_WIDTH - LVL1C_ADDR_WIDTH;
+	-- Number of bits needed to save bookkeeping, 1 for valid, 1 for dirty
+	constant LVL1DC_BKK_WIDTH : integer := 2;
+
+	-- Basic Level 2 cache parameters:
+	-- This will be size of both instruction and data caches in bytes
+	constant LVL2_CACHE_SIZE : integer := C_LVL2_CACHE_SIZE;
+	-- Derived cache parameters:
+	-- Number of blocks in cache
+	constant LVL2C_NB_BLOCKS : integer := LVL2_CACHE_SIZE/BLOCK_SIZE; 
+	-- Cache depth is size in bytes divided by word size in bytes
+	constant LVL2C_DEPTH : integer := LVL2_CACHE_SIZE/4; 
+	-- Number of bits needed to address all bytes inside the cache
+	constant LVL2C_ADDR_WIDTH : integer := clogb2(LVL2_CACHE_SIZE);
+	-- Number of bits needed to address all blocks inside the cache
+	constant LVL2C_INDEX_WIDTH : integer := LVL2C_ADDR_WIDTH - BLOCK_ADDR_WIDTH;
+	-- Number of bits needed to represent which block is currently in cache
+	constant LVL2C_TAG_WIDTH : integer := PHY_ADDR_WIDTH - LVL2C_ADDR_WIDTH;
+	-- Number of bits needed to save bookkeeping, 1 for data flag, 1 for instr flag, 1 for dirty, 1 for valid,
+	constant LVL2C_BKK_WIDTH : integer := 4;
+
+	-- Bit ordering in bookkeeping of tag store (not recommended to modify : not tested)
+	constant LVL2C_BKK_VALID : integer := 0; -- MSB-5
+	constant LVL2C_BKK_DIRTY : integer := 1; -- MSB-4
+	constant LVL2C_BKK_INSTR : integer := 2; -- MSB-3
+	constant LVL2C_BKK_DATA : integer := 3; -- MSB-2
+	constant LVL2C_BKK_NEXTV : integer := 0; -- MSB-1
+	constant LVL2C_BKK_VICTIM : integer := 1; -- MSB 
+
+	-- Associativity of Level2 cache - number of ways
+	constant	LVL2C_ASSOCIATIVITY : natural := C_LVL2C_ASSOCIATIVITY;
+	constant	LVL2C_ASSOC_LOG2 : natural := clogb2(LVL2C_ASSOCIATIVITY);
+	-- Number of bits needed to save bookkeeping, 1 for victim, 1 for nextvictim
+	constant LVL2C_NWAY_BKK_WIDTH : integer := 2;
 
 	-- SIGNALS FOR INTERACTION WITH RAMS
 	--*******************************************************************************************

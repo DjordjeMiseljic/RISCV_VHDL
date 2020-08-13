@@ -18,7 +18,7 @@ generic (PHY_ADDR_SPACE : natural := 512*1024*1024; -- 512 MB
 			addr_phy_o 			: out std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
 			dread_phy_i 		: in std_logic_vector(31 downto 0);
 			dwrite_phy_o		: out std_logic_vector(31 downto 0);
-         we_phy_o				: out std_logic_vector(3 downto 0);
+            we_phy_o				: out std_logic;
 			-- Level 1 caches
 			-- Instruction cache
 			--rst_instr_cache_i : in std_logic;
@@ -59,7 +59,7 @@ architecture Behavioral of cache_contr_dm is
 	signal addra_instr_cache_s : std_logic_vector((LVL1C_ADDR_WIDTH-3) downto 0); --(-2 bits because byte in 32-bit word is not adressible) 
 	signal dwritea_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1-1 downto 0);
 	signal dreada_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1-1 downto 0);
-	signal wea_instr_cache_s : std_logic_vector(C_NUM_COL-1 downto 0);
+	signal wea_instr_cache_s : std_logic;
 	signal ena_instr_cache_s : std_logic;
 	signal rsta_instr_cache_s : std_logic;
 	signal regcea_instr_cache_s : std_logic;
@@ -113,7 +113,7 @@ architecture Behavioral of cache_contr_dm is
 	signal addra_lvl2_cache_s : std_logic_vector((LVL2C_ADDR_WIDTH-3) downto 0); --(-2 bits because byte in 32-bit word is not adressible)
 	signal dwritea_lvl2_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
 	signal dreada_lvl2_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
-	signal wea_lvl2_cache_s : std_logic_vector(C_NUM_COL-1 downto 0);
+	signal wea_lvl2_cache_s : std_logic;
 	signal ena_lvl2_cache_s : std_logic;
 	signal rsta_lvl2_cache_s : std_logic;
 	signal regcea_lvl2_cache_s : std_logic;
@@ -121,7 +121,7 @@ architecture Behavioral of cache_contr_dm is
 	signal addrb_lvl2_cache_s : std_logic_vector((LVL2C_ADDR_WIDTH-3) downto 0);
 	signal dwriteb_lvl2_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
 	signal dreadb_lvl2_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
-	signal web_lvl2_cache_s : std_logic_vector(C_NUM_COL-1 downto 0);
+	signal web_lvl2_cache_s : std_logic;
 	signal enb_lvl2_cache_s : std_logic;
 	signal rstb_lvl2_cache_s : std_logic;
 	signal regceb_lvl2_cache_s : std_logic;
@@ -390,7 +390,7 @@ begin
 		addra_instr_tag_s <= lvl1i_c_idx_s;
 		wea_instr_tag_s <= '0';
 		dwritea_instr_tag_s <= (others => '0');
-		wea_instr_cache_s <= (others => '0');
+		wea_instr_cache_s <= '0';
 		addra_instr_cache_s <= lvl1i_c_addr_s((LVL1C_ADDR_WIDTH-1) downto 2);
 		dwritea_instr_cache_s <= (others => '0');
 		dread_instr_o <= dreada_instr_cache_s;
@@ -404,7 +404,7 @@ begin
 		dread_data_o <= dreada_data_cache_s;
 		-- LVL2 cache and tag
 		addra_lvl2_cache_s <= lvl2ia_c_addr_s((LVL2C_ADDR_WIDTH-1) downto 2);
-		wea_lvl2_cache_s <= (others => '0');
+		wea_lvl2_cache_s <= '0';
 		dwritea_lvl2_cache_s <= (others => '0'); 
 		addra_lvl2_tag_s <= lvl2da_c_idx_s;
 		wea_lvl2_tag_s <= '0';
@@ -514,7 +514,7 @@ begin
 				addra_lvl2_cache_s <= lvl2ia_c_idx_s & cc_counter_incr;
 				addra_instr_cache_s <= lvl1i_c_idx_s & cc_counter_reg;
 				dwritea_instr_cache_s <= dreada_lvl2_cache_s;
-				wea_instr_cache_s <= "1111";
+				wea_instr_cache_s <= '1';
 
 				cc_counter_next <= cc_counter_incr;
 
@@ -580,7 +580,7 @@ begin
 				lvl2a_c_idx_s <= lvl2ia_c_idx_s;
 
 				dwritea_lvl2_cache_s <= dreada_data_cache_s;
-				wea_lvl2_cache_s <= "1111";
+				wea_lvl2_cache_s <= '1';
 
 				cc_counter_next <= cc_counter_incr;
 
@@ -606,7 +606,7 @@ begin
 				--lvl2a_c_idx_s <= lvl2dl_c_idx_s; -- TODO PROBLEM HERE, check if it's needed
 
 				dwritea_lvl2_cache_s <= dreada_data_cache_s;
-				wea_lvl2_cache_s <= "1111";
+				wea_lvl2_cache_s <= '1';
 
 				cc_counter_next <= cc_counter_incr;
 
@@ -657,7 +657,7 @@ begin
 		mc_counter_next <= (others => '0');
 		-- LVL 2 signals ports B
 		addrb_lvl2_cache_s <= (others => '0');
-		web_lvl2_cache_s <= (others => '0');
+		web_lvl2_cache_s <= '0';
 		dwriteb_lvl2_cache_s <= (others => '0'); 
 		addrb_lvl2_tag_s <= lvl2a_c_idx_s;
 		web_lvl2_tag_s <= '0';
@@ -666,7 +666,7 @@ begin
 		-- dread_phy_i -> use this to read data from bus
 		addr_phy_o <= (others => '0'); 
 		dwrite_phy_o <= (others => '0'); 
-		we_phy_o <= (others => '0');
+		we_phy_o <= '0';
 		-- coherency
 		flush_lvl1d_s <= '0';
 		invalidate_lvl1d_s <= '0';
@@ -700,7 +700,7 @@ begin
 				addr_phy_o <= lvl2b_ts_tag_s & lvl2a_c_idx_s & mc_counter_reg & "00"; 
 				addrb_lvl2_cache_s <= lvl2a_c_idx_s & mc_counter_incr;
 				dwrite_phy_o <= dreadb_lvl2_cache_s;
-				we_phy_o <= "1111";
+				we_phy_o <= '1';
 
 				mc_counter_next <= mc_counter_incr;
 
@@ -724,7 +724,7 @@ begin
 				addr_phy_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & mc_counter_incr & "00";
 				addrb_lvl2_cache_s <= lvl2a_c_idx_s & mc_counter_reg;
 				dwriteb_lvl2_cache_s <= dread_phy_i;
-				web_lvl2_cache_s <= "1111";
+				web_lvl2_cache_s <= '1';
 
 				mc_counter_next <= mc_counter_incr;
 
@@ -747,34 +747,23 @@ begin
 	end process;
 
 	--********** LEVEL 1 CACHE  **************
-	-- INSTRUCTION CACHE
-	-- TODO double check this address logic, change if unaligned accesses are implemented
-	-- TODO 32 bit address will be cut here, send the minimum bits needed
-	-- TODO decide if cutting 2 LSB bits is done here or in cache controller
-	--we_instr_cache_s <= "0000"; NOTE nah
-	regcea_instr_cache_s <= '0';
+		-- INSTRUCTION CACHE
 	ena_instr_cache_s <= '1';
-	rsta_instr_cache_s <= '0';
-	-- TODO make a driver for dina, wea, douta
 	-- Instantiation of instruction cache
-	instruction_cache : entity work.RAM_sp_ar_bw(rtl)
+	instruction_cache : entity work.RAM_sp_ar(rtl)
 		generic map (
-			NB_COL => C_NUM_COL,
-			COL_WIDTH => C_COL_WIDTH,
+			RAM_WIDTH => C_NUM_COL*C_COL_WIDTH,
 			RAM_DEPTH => LVL1C_DEPTH,
-			RAM_PERFORMANCE => "LOW_LATENCY",
 			INIT_FILE => "" 
 		)
 		port map  (
 			clk   => clk,
 			addra  => addra_instr_cache_s,
 			dina   => dwritea_instr_cache_s,
-			wea    => wea_instr_cache_s,
 			ena    => ena_instr_cache_s,
-			rsta   => rsta_instr_cache_s,
-			regcea => regcea_instr_cache_s,
-			douta  => dreada_instr_cache_s
-		);
+			douta  => dreada_instr_cache_s,
+			wea    => wea_instr_cache_s
+	);
 
  -- TAG STORE FOR INSTRUCTION CACHE
  -- TODO @ system boot this entire memory needs to be set to 0
@@ -874,13 +863,12 @@ begin
 	regceb_lvl2_cache_s <= '0'; -- TODO remove these if Vivado doesnt
 	-- TODO in this type of bram, 2 LSB bits are removed, implement this here or in cache controller!!!
 	-- Instantiation of level 2 cache
-	level_2_cache : entity work.RAM_tdp_rf_bw(rtl)
+	level_2_cache : entity work.RAM_tdp_rf(rtl)
 		generic map (
-			NB_COL => C_NUM_COL,
-			COL_WIDTH => C_COL_WIDTH,
-			RAM_DEPTH => LVL2C_DEPTH,
-			RAM_PERFORMANCE => "LOW_LATENCY",
-			INIT_FILE => "" 
+		    RAM_WIDTH => C_NUM_COL*C_COL_WIDTH,
+            RAM_DEPTH => LVL2C_DEPTH,
+            RAM_PERFORMANCE => "LOW_LATENCY",
+		    INIT_FILE => "" 
 		)
 		port map  (
 			--global

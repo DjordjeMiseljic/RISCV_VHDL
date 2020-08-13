@@ -5,6 +5,14 @@ use std.textio.all;
 use work.cache_pkg.all;
 
 entity RISCV_w_cache is
+	generic (
+			C_PHY_ADDR_WIDTH : integer := 32;
+			C_TS_BRAM_TYPE : string := "HIGH_PERFORMANCE"; 
+			C_BLOCK_SIZE : integer := 64;
+			C_LVL1_CACHE_SIZE : integer := 1024*1;  -- 1KB
+			C_LVL2_CACHE_SIZE : integer := 1024*4;  -- 4KB
+			C_LVL2C_ASSOCIATIVITY : natural := 4
+	);
 	port (clk : in std_logic;
 			ce : in std_logic;
 			reset : in std_logic;
@@ -78,6 +86,14 @@ begin
 	--********** Memory subsystem **************
 	-- 2 levels of caches + required controllers
 	cc_nway: entity work.cache_contr_nway_vnv(behavioral)
+		generic map(
+			C_PHY_ADDR_WIDTH => C_PHY_ADDR_WIDTH,
+			C_TS_BRAM_TYPE  => C_TS_BRAM_TYPE,
+			C_BLOCK_SIZE  => C_BLOCK_SIZE,
+			C_LVL1_CACHE_SIZE => C_LVL1_CACHE_SIZE,
+			C_LVL2_CACHE_SIZE => C_LVL2_CACHE_SIZE,
+			C_LVL2C_ASSOCIATIVITY => C_LVL2C_ASSOCIATIVITY
+		);
 		port map(
 			clk => clk,
 			ce => ce,
