@@ -168,8 +168,8 @@ architecture Behavioral of cache_contr_dm is
 	--signal lvl1ib_ts_tag_s : std_logic_vector(LVL1C_TAG_WIDTH-1 downto 0);
 	--signal lvl1ib_ts_bkk_s : std_logic_vector(LVL1IC_BKK_WIDTH-1 downto 0);
 	-- TODO check if these will be used, or signal values will be derived directly from some other signal
-	signal lvl2a_c_idx_s : std_logic_vector(LVL2C_INDEX_WIDTH-1 downto 0);
-	signal lvl2a_c_tag_s : std_logic_vector(LVL2C_TAG_WIDTH-1 downto 0);
+	signal lvl2_c_idx_s : std_logic_vector(LVL2C_INDEX_WIDTH-1 downto 0);
+	signal lvl2_c_tag_s : std_logic_vector(LVL2C_TAG_WIDTH-1 downto 0);
 	-- 'tag', 'index', 'byte in block' and 'tag store address' fields for levelvl2 cache
 	--signal lvl2ia_c_bib_s : std_logic_vector(BLOCK_ADDR_WIDTH-1 downto 0);
 	--signal lvl2da_c_bib_s : std_logic_vector(BLOCK_ADDR_WIDTH-1 downto 0);
@@ -216,7 +216,7 @@ architecture Behavioral of cache_contr_dm is
 	--signal lvl1d_c_dup_s  : std_logic; -- addressing block in data cache that has duplicate in instruction cache
 	signal lvl1i_c_hit_s  : std_logic; -- hit in instruction cache
 	--signal lvl1i_c_dup_s  : std_logic; -- addressing block in instruction cache that has duplicate in data cache
-	signal lvl2a_c_hit_s  : std_logic; -- hit in lvl 2 cache
+	signal lvl2_c_hit_s  : std_logic; -- hit in lvl 2 cache
 	signal lvl2b_c_hit_s  : std_logic; -- hit in lvl 2 cache
 
 	signal data_ready_s  : std_logic; -- hit in lvl 2 cache
@@ -305,7 +305,7 @@ begin
 	--lvl1ib_ts_bkk_s <= dread_data_tag_s(LVL1C_TAG_WIDTH+LVL1DC_BKK_WIDTH-1 downto LVL1C_TAG_WIDTH);
 
 	-- lvl2 tag store, for LVL1
-	--addra_lvl2_tag_s <= lvl2a_c_idx_s; -- TODO set either data or instruction cache address in FSM  (the one that missed)
+	--addra_lvl2_tag_s <= lvl2_c_idx_s; -- TODO set either data or instruction cache address in FSM  (the one that missed)
 	lvl2a_ts_tag_s <= dreada_lvl2_tag_s(LVL2C_TAG_WIDTH-1 downto 0);
 	lvl2a_ts_bkk_s <= dreada_lvl2_tag_s(LVL2C_TAG_WIDTH+LVL2C_BKK_WIDTH-1 downto LVL2C_TAG_WIDTH);
 
@@ -320,7 +320,7 @@ begin
 	--lvl1di_tag_cmp_s <= '1' when lvl1d_c_tag_s = lvl1ib_ts_tag_s else '0';
 	lvl1ii_tag_cmp_s <= '1' when lvl1i_c_tag_s = lvl1ia_ts_tag_s else '0';
 	--lvl1id_tag_cmp_s <= '1' when lvl1i_c_tag_s = lvl1db_ts_tag_s else '0';
-	lvl2a_tag_cmp_s <= '1' when lvl2a_c_tag_s = lvl2a_ts_tag_s else '0'; 
+	lvl2a_tag_cmp_s <= '1' when lvl2_c_tag_s = lvl2a_ts_tag_s else '0'; 
 	lvl2b_tag_cmp_s <= '1' when lvl2b_c_tag_s = lvl2b_ts_tag_s else '0'; 
 	
 	-- Cache hit/miss indicator flags => same tag + valid
@@ -330,7 +330,7 @@ begin
 	--lvl1d_c_dup_s <= lvl1di_tag_cmp_s and lvl1ib_ts_bkk_s(0);
 	--lvl1i_c_dup_s <= lvl1id_tag_cmp_s and lvl1db_ts_bkk_s(0);
 	--lvl1i_c_haz_s <= lvl1i_c_dup_s and lvl1db_ts_bkk_s(1);
-	lvl2a_c_hit_s <= lvl2a_tag_cmp_s and lvl2a_ts_bkk_s(0); 
+	lvl2_c_hit_s <= lvl2a_tag_cmp_s and lvl2a_ts_bkk_s(0); 
 	lvl2b_c_hit_s <= lvl2b_tag_cmp_s and lvl2b_ts_bkk_s(0);
 
 	-- TODO check if this shit can even work outside of fsm
@@ -372,7 +372,7 @@ begin
 	-- FSM that controls communication between lvl1 instruction cache and lvl2 shared cache
 
 	fsm_cache : process(cc_state_reg, lvl1i_c_addr_s, lvl1d_c_addr_s, lvl2ia_c_tag_s, dreada_instr_cache_s, lvl1i_c_tag_s,
-		we_data_i, dwrite_data_i, dreada_data_cache_s, lvl1i_c_hit_s, lvl2ia_c_addr_s, lvl2a_c_hit_s,
+		we_data_i, dwrite_data_i, dreada_data_cache_s, lvl1i_c_hit_s, lvl2ia_c_addr_s, lvl2_c_hit_s,
 		lvl1d_c_hit_s, lvl1da_ts_bkk_s, lvl2da_c_idx_s, cc_counter_reg, cc_counter_incr, lvl2ia_c_idx_s, 
 		lvl2a_ts_tag_s, lvl1i_c_idx_s, lvl2da_c_tag_s, lvl1d_c_idx_s, dreada_lvl2_cache_s,
 		lvl1d_c_tag_s, data_access_s, re_data_i, lvl1da_ts_tag_s, flush_lvl1d_s, invalidate_lvl1d_s, invalidate_lvl1i_s, -- NOTE 
@@ -384,8 +384,8 @@ begin
 		cc_state_next <= idle;
 		cc_counter_next <= (others => '0');
 		-- Misc
-		lvl2a_c_idx_s <= lvl2ia_c_idx_s;
-		lvl2a_c_tag_s <= lvl2ia_c_tag_s;
+		lvl2_c_idx_s <= lvl2ia_c_idx_s;
+		lvl2_c_tag_s <= lvl2ia_c_tag_s;
 		-- LVL1 instruction cache and tag
 		addra_instr_tag_s <= lvl1i_c_idx_s;
 		wea_instr_tag_s <= '0';
@@ -445,11 +445,11 @@ begin
 			when check_lvl2_instr => 
 				check_lvl2_s <= '1';
 				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
-				lvl2a_c_idx_s <= lvl2ia_c_idx_s;
-				lvl2a_c_tag_s <= lvl2ia_c_tag_s;
+				lvl2_c_idx_s <= lvl2ia_c_idx_s;
+				lvl2_c_tag_s <= lvl2ia_c_tag_s;
 
 
-				if (lvl2a_c_hit_s = '1') then
+				if (lvl2_c_hit_s = '1') then
 					cc_state_next <= fetch_instr;
 					addra_lvl2_cache_s <= lvl2ia_c_idx_s & cc_counter_reg;
 					addra_lvl2_tag_s <= lvl2il_c_idx_s;
@@ -481,10 +481,10 @@ begin
 			when check_lvl2_data => 
 				check_lvl2_s <= '1';
 				addra_lvl2_tag_s <= lvl2da_c_idx_s;
-				lvl2a_c_idx_s <= lvl2da_c_idx_s;
-				lvl2a_c_tag_s <= lvl2da_c_tag_s;
+				lvl2_c_idx_s <= lvl2da_c_idx_s;
+				lvl2_c_tag_s <= lvl2da_c_tag_s;
 
-				if (lvl2a_c_hit_s = '1') then
+				if (lvl2_c_hit_s = '1') then
 					cc_state_next <= fetch_data;
 					addra_lvl2_tag_s <= lvl2dl_c_idx_s; 
 					addra_lvl2_cache_s <= lvl2da_c_idx_s & cc_counter_reg;
@@ -521,8 +521,8 @@ begin
 				-- TODO depending on mc fsm, see if this is needed or not
 				-- NOTE this is needed because fetching in cc and mc are overlapped
 				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
-				lvl2a_c_tag_s <= lvl2ia_c_tag_s;
-				lvl2a_c_idx_s <= lvl2ia_c_idx_s;
+				lvl2_c_tag_s <= lvl2ia_c_tag_s;
+				lvl2_c_idx_s <= lvl2ia_c_idx_s;
 
 				if(cc_counter_reg = COUNTER_MIN)then 
 					-- block is going to be removed from lvl1ic
@@ -551,8 +551,8 @@ begin
 				-- TODO depending on mc fsm, see if this is needed or not 
 				-- NOTE this is needed because fetching in cc and mc are overlapped
 				addra_lvl2_tag_s <= lvl2da_c_idx_s;
-				lvl2a_c_tag_s <= lvl2da_c_tag_s; 
-				lvl2a_c_idx_s <= lvl2da_c_idx_s;
+				lvl2_c_tag_s <= lvl2da_c_tag_s; 
+				lvl2_c_idx_s <= lvl2da_c_idx_s;
 
 				if(cc_counter_reg = COUNTER_MIN)then 
 					-- block is going to be removed from lvl1ic
@@ -576,8 +576,8 @@ begin
 				-- TODO depending on mc fsm, see if this is needed or not
 				-- NOTE this is needed because fetching in cc and mc are overlapped
 				addra_lvl2_tag_s <= lvl2ia_c_idx_s;
-				lvl2a_c_tag_s <= lvl2ia_c_tag_s;
-				lvl2a_c_idx_s <= lvl2ia_c_idx_s;
+				lvl2_c_tag_s <= lvl2ia_c_tag_s;
+				lvl2_c_idx_s <= lvl2ia_c_idx_s;
 
 				dwritea_lvl2_cache_s <= dreada_data_cache_s;
 				wea_lvl2_cache_s <= '1';
@@ -602,8 +602,8 @@ begin
 				-- TODO depending on mc fsm, see if this is needed or not
 				-- NOTE this is needed because fetching in cc and mc are overlapped
 				addra_lvl2_tag_s <= lvl2dl_c_idx_s;
-				--lvl2a_c_tag_s <= lvl2dl_c_tag_s; -- TODO  PROBLEM HERE, check if it's needed
-				--lvl2a_c_idx_s <= lvl2dl_c_idx_s; -- TODO PROBLEM HERE, check if it's needed
+				--lvl2_c_tag_s <= lvl2dl_c_tag_s; -- TODO  PROBLEM HERE, check if it's needed
+				--lvl2_c_idx_s <= lvl2dl_c_idx_s; -- TODO PROBLEM HERE, check if it's needed
 
 				dwritea_lvl2_cache_s <= dreada_data_cache_s;
 				wea_lvl2_cache_s <= '1';
@@ -624,8 +624,8 @@ begin
 			when update_instr_ts => 
 				-- NOTE this is needed because fetching in cc and mc are overlapped
 				--addra_lvl2_tag_s <= lvl2ia_c_idx_s;
-				--lvl2a_c_tag_s <= lvl2ia_c_tag_s;
-				--lvl2a_c_idx_s <= lvl2ia_c_idx_s;
+				--lvl2_c_tag_s <= lvl2ia_c_tag_s;
+				--lvl2_c_idx_s <= lvl2ia_c_idx_s;
 
 				cc_state_next <= idle;
 				-- write new tag to tag store, set valid, reset dirty
@@ -635,8 +635,8 @@ begin
 			when update_data_ts => 
 				-- NOTE this is needed because fetching in cc and mc are overlapped
 				--addra_lvl2_tag_s <= lvl2da_c_idx_s;
-				--lvl2a_c_tag_s <= lvl2da_c_tag_s;
-				--lvl2a_c_idx_s <= lvl2da_c_idx_s;
+				--lvl2_c_tag_s <= lvl2da_c_tag_s;
+				--lvl2_c_idx_s <= lvl2da_c_idx_s;
 
 				cc_state_next <= idle;
 				-- write new tag to tag store, set valid, reset dirty
@@ -648,7 +648,7 @@ begin
 	end process;
 
 	fsm_inter_proc : process(mc_state_reg, mc_counter_reg, mc_counter_incr, 
-									lvl2a_c_idx_s, lvl2a_c_tag_s, lvl2a_c_hit_s, lvl2a_ts_bkk_s, 
+									lvl2_c_idx_s, lvl2_c_tag_s, lvl2_c_hit_s, 
 									lvl2b_ts_tag_s, dread_phy_i,  lvl2b_ts_bkk_s,
 							 		 check_lvl2_s, dreadb_lvl2_cache_s) is
 	begin
@@ -659,7 +659,7 @@ begin
 		addrb_lvl2_cache_s <= (others => '0');
 		web_lvl2_cache_s <= '0';
 		dwriteb_lvl2_cache_s <= (others => '0'); 
-		addrb_lvl2_tag_s <= lvl2a_c_idx_s;
+		addrb_lvl2_tag_s <= lvl2_c_idx_s;
 		web_lvl2_tag_s <= '0';
 		dwriteb_lvl2_tag_s <= (others => '0'); 
 		-- MEMORY interface signals (bus)
@@ -674,38 +674,38 @@ begin
 
 		case (mc_state_reg) is
 			when idle =>
-				if(lvl2a_c_hit_s = '0' and check_lvl2_s = '1')then 
-					case (lvl2a_ts_bkk_s(1 downto 0)) is 
+				if(lvl2_c_hit_s = '0' and check_lvl2_s = '1')then 
+					case (lvl2b_ts_bkk_s(1 downto 0)) is 
 						when "10" => -- dirty but not valid lvl2, data lvl1 has updated values
 							mc_state_next <= idle; 
 							flush_lvl1d_s <= '1';
 						when "11" => -- dirty and valid lvl2, flush to physical
 							mc_state_next <= flush; 
-							addrb_lvl2_tag_s <= lvl2a_c_idx_s;
-							addrb_lvl2_cache_s <= lvl2a_c_idx_s & mc_counter_reg;
+							addrb_lvl2_tag_s <= lvl2_c_idx_s;
+							addrb_lvl2_cache_s <= lvl2_c_idx_s & mc_counter_reg;
 						when others =>
 						--when "0-" => -- not initialized / valid but not dirty data -- 01 -> ttim loop -- 00 =>
 							mc_state_next <= fetch;
-							addr_phy_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & mc_counter_reg & "00";
-							if (lvl2a_ts_bkk_s(LVL2C_BKK_DATA)='1')then
+							addr_phy_o <= lvl2_c_tag_s & lvl2_c_idx_s & mc_counter_reg & "00";
+							if (lvl2b_ts_bkk_s(LVL2C_BKK_DATA)='1')then
 								invalidate_lvl1d_s <= '1';
 							end if;
-							if (lvl2a_ts_bkk_s(LVL2C_BKK_INSTR)='1')then
+							if (lvl2b_ts_bkk_s(LVL2C_BKK_INSTR)='1')then
 								invalidate_lvl1i_s <= '1';
 							end if;
 					end case;
 				end if;
 
 			when flush =>
-				addr_phy_o <= lvl2b_ts_tag_s & lvl2a_c_idx_s & mc_counter_reg & "00"; 
-				addrb_lvl2_cache_s <= lvl2a_c_idx_s & mc_counter_incr;
+				addr_phy_o <= lvl2b_ts_tag_s & lvl2_c_idx_s & mc_counter_reg & "00"; 
+				addrb_lvl2_cache_s <= lvl2_c_idx_s & mc_counter_incr;
 				dwrite_phy_o <= dreadb_lvl2_cache_s;
 				we_phy_o <= '1';
 
 				mc_counter_next <= mc_counter_incr;
 
 
-				addrb_lvl2_tag_s <= lvl2a_c_idx_s;
+				addrb_lvl2_tag_s <= lvl2_c_idx_s;
 				if(mc_counter_reg = COUNTER_MIN)then  -- because of read first mode
 					-- invalidate so the next state after idle is fetch
 					-- NOTE: when invalidating, tag doesn't matter? 
@@ -721,16 +721,16 @@ begin
 				end if;
 
 			when fetch =>
-				addr_phy_o <= lvl2a_c_tag_s & lvl2a_c_idx_s & mc_counter_incr & "00";
-				addrb_lvl2_cache_s <= lvl2a_c_idx_s & mc_counter_reg;
+				addr_phy_o <= lvl2_c_tag_s & lvl2_c_idx_s & mc_counter_incr & "00";
+				addrb_lvl2_cache_s <= lvl2_c_idx_s & mc_counter_reg;
 				dwriteb_lvl2_cache_s <= dread_phy_i;
 				web_lvl2_cache_s <= '1';
 
 				mc_counter_next <= mc_counter_incr;
 
-				addrb_lvl2_tag_s <= lvl2a_c_idx_s;
+				addrb_lvl2_tag_s <= lvl2_c_idx_s;
 				if(mc_counter_reg = COUNTER_MIN)then  -- because of read first mode
-					dwriteb_lvl2_tag_s <= "0001" & lvl2a_c_tag_s; 
+					dwriteb_lvl2_tag_s <= "0001" & lvl2_c_tag_s; 
 					web_lvl2_tag_s <= '1';
 				end if;
 
