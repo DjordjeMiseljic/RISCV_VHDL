@@ -5,28 +5,31 @@ use std.textio.all;
 use work.cache_pkg.all;
 
 entity cache_contr_dm is
-generic (PHY_ADDR_SPACE : natural := 512*1024*1024; -- 512 MB
-			BLOCK_SIZE : natural := 64;
-			LVL1_CACHE_SIZE : natural := 1048;
-			LVL2_CACHE_SIZE : natural := 4096);
+generic (	       C_PHY_ADDR_WIDTH : integer := 32;
+			C_TS_BRAM_TYPE : string := "HIGH_PERFORMANCE"; 
+			C_BLOCK_SIZE : integer := 64;
+			C_LVL1_CACHE_SIZE : integer := 1024*1;  -- 1KB
+			C_LVL2_CACHE_SIZE : integer := 1024*4;  -- 4KB
+			C_LVL2C_ASSOCIATIVITY : natural := 4);
 	port (clk : in std_logic;
 			reset : in std_logic;
 			-- controller drives ce for RISC
 			data_ready_o : out std_logic;
 			instr_ready_o : out std_logic;
 			-- NOTE Just for test bench, to simulate real memory
-			addr_phy_o 			: out std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+			addr_phy_o 			: out std_logic_vector(C_PHY_ADDR_WIDTH-1 downto 0);
 			dread_phy_i 		: in std_logic_vector(31 downto 0);
 			dwrite_phy_o		: out std_logic_vector(31 downto 0);
             we_phy_o				: out std_logic;
+            fencei_i				: in std_logic;
 			-- Level 1 caches
 			-- Instruction cache
 			--rst_instr_cache_i : in std_logic;
 			--en_instr_cache_i  : in std_logic;
-			addr_instr_i 		: in std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+			addr_instr_i 		: in std_logic_vector(C_PHY_ADDR_WIDTH-1 downto 0);
 			dread_instr_o 		: out std_logic_vector(31 downto 0);
 			-- Data cache
-			addr_data_i			: in std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+			addr_data_i			: in std_logic_vector(C_PHY_ADDR_WIDTH-1 downto 0);
 			dread_data_o 		: out std_logic_vector(31 downto 0);
 			dwrite_data_i		: in std_logic_vector(31 downto 0);
          we_data_i			: in std_logic_vector(3 downto 0);
@@ -36,18 +39,71 @@ end entity;
 
 architecture Behavioral of cache_contr_dm is
 
-	-- DERIVE 2nd ORDER CONSTANTS
-	constant PHY_ADDR_WIDTH : integer := clogb2(PHY_ADDR_SPACE);
+    -- CONSTANTS, derived from generics
+	--*******************************************************************************************
+	-- Physical adress size and width
+	-- if physical address space is 500MB, phy address width can be 29
+	constant PHY_ADDR_WIDTH : integer := C_PHY_ADDR_WIDTH;
+	--constant PHY_ADDR_WIDTH : integer := 32;
+
+	-- "HIGH_PERFORMANCE" for higher clk speed and higher troughput
+	-- "LOW_LATENCY" for lower clk speed and low latency
+	constant TS_BRAM_TYPE : string := C_TS_BRAM_TYPE;
+	-- Block size in bytes, this can be changed, as long as it is power of 2
+	constant BLOCK_SIZE : integer := C_BLOCK_SIZE;
+	-- Number of bits needed to address all bytes inside the block
 	constant BLOCK_ADDR_WIDTH : integer := clogb2(BLOCK_SIZE);
+	-- Width of data bus
+	constant C_NUM_COL : integer := 4; -- fixed, word is 4 bytes
+	constant C_COL_WIDTH : integer := 8; -- fixed, byte is 8 bits
+
+	-- Basic Level 1 cache parameters:
+	-- This will be size of both instruction and data caches in bytes
+	constant LVL1_CACHE_SIZE : integer := C_LVL1_CACHE_SIZE;
+	-- Derived cache parameters:
+	-- Number of blocks in cache
+	constant LVL1C_NB_BLOCKS : integer := LVL1_CACHE_SIZE/BLOCK_SIZE; 
+	-- Cache depth - number of words in cache - size in bytes divided by word size in bytes
+	constant LVL1C_DEPTH : integer := LVL1_CACHE_SIZE/4; 
+	-- Number of bits needed to address all bytes inside the cache
 	constant LVL1C_ADDR_WIDTH : integer := clogb2(LVL1_CACHE_SIZE);
+	-- Number of bits needed to address all blocks inside the cache
 	constant LVL1C_INDEX_WIDTH : integer := LVL1C_ADDR_WIDTH - BLOCK_ADDR_WIDTH;
+	-- Number of bits needed to represent which block is currently in cache
 	constant LVL1C_TAG_WIDTH : integer := PHY_ADDR_WIDTH - LVL1C_ADDR_WIDTH;
+	-- Number of bits needed to save bookkeeping, 1 for valid, 1 for dirty
 	constant LVL1DC_BKK_WIDTH : integer := 2;
-	constant LVL1IC_BKK_WIDTH : integer := 2;
+
+	-- Basic Level 2 cache parameters:
+	-- This will be size of both instruction and data caches in bytes
+	constant LVL2_CACHE_SIZE : integer := C_LVL2_CACHE_SIZE;
+	-- Derived cache parameters:
+	-- Number of blocks in cache
+	constant LVL2C_NB_BLOCKS : integer := LVL2_CACHE_SIZE/BLOCK_SIZE; 
+	-- Cache depth is size in bytes divided by word size in bytes
+	constant LVL2C_DEPTH : integer := LVL2_CACHE_SIZE/4; 
+	-- Number of bits needed to address all bytes inside the cache
 	constant LVL2C_ADDR_WIDTH : integer := clogb2(LVL2_CACHE_SIZE);
+	-- Number of bits needed to address all blocks inside the cache
 	constant LVL2C_INDEX_WIDTH : integer := LVL2C_ADDR_WIDTH - BLOCK_ADDR_WIDTH;
+	-- Number of bits needed to represent which block is currently in cache
 	constant LVL2C_TAG_WIDTH : integer := PHY_ADDR_WIDTH - LVL2C_ADDR_WIDTH;
+	-- Number of bits needed to save bookkeeping, 1 for data flag, 1 for instr flag, 1 for dirty, 1 for valid,
 	constant LVL2C_BKK_WIDTH : integer := 4;
+
+	-- Bit ordering in bookkeeping of tag store (not recommended to modify : not tested)
+	constant LVL2C_BKK_VALID : integer := 0; -- MSB-5
+	constant LVL2C_BKK_DIRTY : integer := 1; -- MSB-4
+	constant LVL2C_BKK_INSTR : integer := 2; -- MSB-3
+	constant LVL2C_BKK_DATA : integer := 3; -- MSB-2
+	constant LVL2C_BKK_NEXTV : integer := 0; -- MSB-1
+	constant LVL2C_BKK_VICTIM : integer := 1; -- MSB 
+
+	-- Associativity of Level2 cache - number of ways
+	constant	LVL2C_ASSOCIATIVITY : natural := C_LVL2C_ASSOCIATIVITY;
+	constant	LVL2C_ASSOC_LOG2 : natural := clogb2(LVL2C_ASSOCIATIVITY);
+	-- Number of bits needed to save bookkeeping, 1 for victim, 1 for nextvictim
+	constant LVL2C_NWAY_BKK_WIDTH : integer := 2;
 
 
 	-- SIGNALS FOR INTERACTION WITH RAMS
@@ -57,8 +113,8 @@ architecture Behavioral of cache_contr_dm is
 
 	-- Instruction cache signals
 	signal addra_instr_cache_s : std_logic_vector((LVL1C_ADDR_WIDTH-3) downto 0); --(-2 bits because byte in 32-bit word is not adressible) 
-	signal dwritea_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1-1 downto 0);
-	signal dreada_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1-1 downto 0);
+	signal dwritea_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
+	signal dreada_instr_cache_s : std_logic_vector(C_NUM_COL*C_COL_WIDTH-1 downto 0);
 	signal wea_instr_cache_s : std_logic;
 	signal ena_instr_cache_s : std_logic;
 	signal rsta_instr_cache_s : std_logic;
@@ -66,8 +122,8 @@ architecture Behavioral of cache_contr_dm is
 
 	-- Instruction cache tag store singals
 	-- port A
-	signal dwritea_instr_tag_s : std_logic_vector(LVL1C_TAG_WIDTH + LVL1IC_BKK_WIDTH - 1 downto 0);
-	signal dreada_instr_tag_s : std_logic_vector(LVL1C_TAG_WIDTH + LVL1IC_BKK_WIDTH - 1 downto 0);
+	signal dwritea_instr_tag_s : std_logic_vector(LVL1C_TAG_WIDTH - 1 downto 0);
+	signal dreada_instr_tag_s : std_logic_vector(LVL1C_TAG_WIDTH - 1 downto 0);
 	signal addra_instr_tag_s : std_logic_vector(clogb2(LVL1C_NB_BLOCKS)-1 downto 0);
 	signal ena_instr_tag_s : std_logic;
 	signal wea_instr_tag_s : std_logic;
@@ -164,8 +220,7 @@ architecture Behavioral of cache_contr_dm is
 	signal lvl1i_c_addr_s : std_logic_vector(LVL1C_ADDR_WIDTH-1 downto 0);
 	-- 'tag' and 'bookkeeping bits: MSB - valid, LSB -dirty' fields from instruction tag store
 	signal lvl1ia_ts_tag_s : std_logic_vector(LVL1C_TAG_WIDTH-1 downto 0);
-	signal lvl1ia_ts_bkk_s : std_logic_vector(LVL1IC_BKK_WIDTH-1 downto 0);
-	--signal lvl1ib_ts_tag_s : std_logic_vector(LVL1C_TAG_WIDTH-1 downto 0);
+	signal lvl1ia_ts_valid_reg, lvl1ia_ts_valid_next : std_logic_vector(LVL1C_NB_BLOCKS-1 downto 0);	--signal lvl1ib_ts_tag_s : std_logic_vector(LVL1C_TAG_WIDTH-1 downto 0);
 	--signal lvl1ib_ts_bkk_s : std_logic_vector(LVL1IC_BKK_WIDTH-1 downto 0);
 	-- TODO check if these will be used, or signal values will be derived directly from some other signal
 	signal lvl2_c_idx_s : std_logic_vector(LVL2C_INDEX_WIDTH-1 downto 0);
@@ -297,7 +352,6 @@ begin
 
 	-- Instruction tag store port A - instruction address
 	lvl1ia_ts_tag_s <= dreada_instr_tag_s(LVL1C_TAG_WIDTH-1 downto 0);
-	lvl1ia_ts_bkk_s <= dreada_instr_tag_s(LVL1C_TAG_WIDTH+LVL1IC_BKK_WIDTH-1 downto LVL1C_TAG_WIDTH);
 	-- NOTE uncoment port B if there is a switch to dual port for tag store
 	-- Instruction tag store port B  - data address
 	--addrb_instr_tag_s <= lvl1d_c_idx_s;
@@ -325,7 +379,7 @@ begin
 	
 	-- Cache hit/miss indicator flags => same tag + valid
 	lvl1d_c_hit_s <= lvl1dd_tag_cmp_s and lvl1da_ts_bkk_s(0); 
-	lvl1i_c_hit_s <= lvl1ii_tag_cmp_s and lvl1ia_ts_bkk_s(0);
+	lvl1i_c_hit_s <= lvl1ii_tag_cmp_s and lvl1ia_ts_valid_reg(to_integer(unsigned(addra_instr_tag_s)));
 	-- NOTE uncoment if explicit resolution of self modifying code is needed
 	--lvl1d_c_dup_s <= lvl1di_tag_cmp_s and lvl1ib_ts_bkk_s(0);
 	--lvl1i_c_dup_s <= lvl1id_tag_cmp_s and lvl1db_ts_bkk_s(0);
@@ -346,6 +400,17 @@ begin
 	cc_counter_incr <= std_logic_vector(unsigned(cc_counter_reg) + to_unsigned(1,BLOCK_ADDR_WIDTH-2));
 	mc_counter_incr <= std_logic_vector(unsigned(mc_counter_reg) + to_unsigned(1,BLOCK_ADDR_WIDTH-2));
 
+
+	lvl1i_ts_valid : process(clk)is
+	begin
+		if(rising_edge(clk))then
+			if(reset = '0' or fencei_i = '1')then --or "FENCE.I SIGNAL COMING FROM CONTROL FLOW" 
+				lvl1ia_ts_valid_reg <= (others => '0');
+			else
+				lvl1ia_ts_valid_reg <= lvl1ia_ts_valid_next;
+			end if;
+		end if;
+	end process;
 	-- Sequential logic - regs
 	regs : process(clk)is
 	begin
@@ -372,7 +437,7 @@ begin
 	-- FSM that controls communication between lvl1 instruction cache and lvl2 shared cache
 
 	fsm_cache : process(cc_state_reg, lvl1i_c_addr_s, lvl1d_c_addr_s, lvl2ia_c_tag_s, dreada_instr_cache_s, lvl1i_c_tag_s,
-		we_data_i, dwrite_data_i, dreada_data_cache_s, lvl1i_c_hit_s, lvl2ia_c_addr_s, lvl2_c_hit_s,
+		we_data_i, dwrite_data_i, dreada_data_cache_s, lvl1i_c_hit_s, lvl2ia_c_addr_s, lvl2_c_hit_s, lvl1ia_ts_valid_reg,
 		lvl1d_c_hit_s, lvl1da_ts_bkk_s, lvl2da_c_idx_s, cc_counter_reg, cc_counter_incr, lvl2ia_c_idx_s, 
 		lvl2a_ts_tag_s, lvl1i_c_idx_s, lvl2da_c_tag_s, lvl1d_c_idx_s, dreada_lvl2_cache_s,
 		lvl1d_c_tag_s, data_access_s, re_data_i, lvl1da_ts_tag_s, flush_lvl1d_s, invalidate_lvl1d_s, invalidate_lvl1i_s, -- NOTE 
@@ -386,6 +451,7 @@ begin
 		-- Misc
 		lvl2_c_idx_s <= lvl2ia_c_idx_s;
 		lvl2_c_tag_s <= lvl2ia_c_tag_s;
+		lvl1ia_ts_valid_next <= lvl1ia_ts_valid_reg;
 		-- LVL1 instruction cache and tag
 		addra_instr_tag_s <= lvl1i_c_idx_s;
 		wea_instr_tag_s <= '0';
@@ -403,7 +469,7 @@ begin
 		dwritea_data_cache_s <= dwrite_data_i;
 		dread_data_o <= dreada_data_cache_s;
 		-- LVL2 cache and tag
-		addra_lvl2_cache_s <= lvl2ia_c_addr_s((LVL2C_ADDR_WIDTH-1) downto 2);
+		addra_lvl2_cache_s <= (others => '0'); -- lvl2ia_c_addr_s((LVL2C_ADDR_WIDTH-1) downto 2);
 		wea_lvl2_cache_s <= '0';
 		dwritea_lvl2_cache_s <= (others => '0'); 
 		addra_lvl2_tag_s <= lvl2da_c_idx_s;
@@ -415,14 +481,14 @@ begin
 				-- ACCESS TO DATA MEMORY
 				if (data_access_s = '1') then --only then its a data memory access
 					if(lvl1d_c_hit_s = '1') then 
-						if(re_data_i = '0')then -- this means instruction is a write, better to check one bit than 4 bits for we_data_i signal
+						if(re_data_i = '0' and lvl1da_ts_bkk_s(1) = '0')then -- this means instruction is a write, better to check one bit than 4 bits for we_data_i signal
 							-- set dirty in lvl1d
 							wea_data_tag_s <= '1';
 							dwritea_data_tag_s <= "11" & lvl1da_ts_tag_s; --data written, dirty + valid
 							-- invalidate lvl2
 							addra_lvl2_tag_s <= lvl2da_c_idx_s;
 							wea_lvl2_tag_s <= '1';
-							dwritea_lvl2_tag_s <= (lvl2a_ts_bkk_s(3 downto 2) & "10" & lvl2a_ts_tag_s); -- dirty but invalid, as the newer data is in data cache
+							dwritea_lvl2_tag_s <= ("10" & "10" & lvl2da_c_tag_s); -- dirty but invalid, as the newer data is in data cache
 						end if;
 					else -- data cache miss
 						addra_lvl2_tag_s <= lvl2da_c_idx_s;
@@ -465,11 +531,8 @@ begin
 						lvl1_valid_s <= '0';
 					end if;
 
-					if(invalidate_lvl1i_s = '1')then
-						--addra_instr_tag_s <= lvl1i_c_idx_s; --  not needed, this is default value
-						dwritea_instr_tag_s <= "00" & lvl1ia_ts_tag_s; 
-						wea_instr_tag_s <= '1';
-						lvl1_valid_s <= '0';
+					if (invalidate_lvl1i_s = '1') then 
+						lvl1ia_ts_valid_next (to_integer(unsigned(lvl1i_c_idx_s))) <= '0';
 					end if;
 
 
@@ -498,11 +561,8 @@ begin
 						lvl1_valid_s <= '0';
 					end if;
 
-					if(invalidate_lvl1i_s = '1')then
-						addra_instr_tag_s <= lvl1d_c_idx_s;
-						dwritea_instr_tag_s <= "00" & lvl1ia_ts_tag_s; 
-						wea_instr_tag_s <= '1';
-						lvl1_valid_s <= '0';
+					if (invalidate_lvl1i_s = '1') then 
+						lvl1ia_ts_valid_next (to_integer(unsigned(lvl1d_c_idx_s))) <= '0';
 					end if;
 
 					--end if;
@@ -602,8 +662,8 @@ begin
 				-- TODO depending on mc fsm, see if this is needed or not
 				-- NOTE this is needed because fetching in cc and mc are overlapped
 				addra_lvl2_tag_s <= lvl2dl_c_idx_s;
-				--lvl2_c_tag_s <= lvl2dl_c_tag_s; -- TODO  PROBLEM HERE, check if it's needed
-				--lvl2_c_idx_s <= lvl2dl_c_idx_s; -- TODO PROBLEM HERE, check if it's needed
+				lvl2_c_tag_s <= lvl2dl_c_tag_s; 
+				lvl2_c_idx_s <= lvl2dl_c_idx_s; 
 
 				dwritea_lvl2_cache_s <= dreada_data_cache_s;
 				wea_lvl2_cache_s <= '1';
@@ -629,9 +689,9 @@ begin
 
 				cc_state_next <= idle;
 				-- write new tag to tag store, set valid, reset dirty
-				dwritea_instr_tag_s <= "01" & lvl1i_c_tag_s; 
+				dwritea_instr_tag_s <=lvl1i_c_tag_s; 
 				wea_instr_tag_s <= '1';
-
+				lvl1ia_ts_valid_next(to_integer(unsigned(lvl1i_c_idx_s))) <= '1';
 			when update_data_ts => 
 				-- NOTE this is needed because fetching in cc and mc are overlapped
 				--addra_lvl2_tag_s <= lvl2da_c_idx_s;
@@ -773,7 +833,7 @@ begin
 	ena_instr_tag_s <= '1'; --NOTE right?
 	instruction_tag_store: entity work.ram_sp_ar(rtl)
 		generic map (
-			RAM_WIDTH => LVL1C_TAG_WIDTH + LVL1IC_BKK_WIDTH,
+			RAM_WIDTH => LVL1C_TAG_WIDTH,
 			RAM_DEPTH => LVL1C_NB_BLOCKS
 		)
 		port map(

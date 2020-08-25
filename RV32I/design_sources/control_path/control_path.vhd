@@ -201,7 +201,7 @@ begin
    ex_mem : process (clk) is
    begin
       if (rising_edge(clk)) then
-			if (reset = '0' )then --or (instr_ready_i = '0' and data_ready_i = '1')
+			if (reset = '0' or (instr_ready_i = '0' and data_ready_i = '1'))then
 				funct3_mem_s      <= (others => '0');
 				data_mem_we_mem_s <= '0';
 				rd_we_mem_s       <= '0';

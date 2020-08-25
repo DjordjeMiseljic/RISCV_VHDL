@@ -558,7 +558,7 @@ begin
 							-- flush needed, prepare address one clk before
 							cc_state_next <= flush_data;
 							addra_lvl2_tag_s <= lvl2dl_c_idx_s;
-							--addra_data_cache_s <= lvl1da_c_idx_s & cc_counter_reg; -- NOTE retardu retardu
+							--addra_data_cache_s <= lvl1da_c_idx_s & cc_counter_reg;
 						else
 							cc_state_next <= check_lvl2_data;
 						end if;
@@ -569,6 +569,7 @@ begin
 			when set_lvl2_dirty =>
 
 				lvl2_c_tag_s <= lvl2da_c_tag_s;
+				lvl2_c_idx_s <= lvl2da_c_idx_s;
 				addra_lvl2_tag_s <= lvl2da_c_idx_s;
 
 				if(TS_BRAM_TYPE = "HIGH_PERFORMANCE")then

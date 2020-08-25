@@ -20,19 +20,21 @@ entity tb_RISCV_w_cache is
 end tb_RISCV_w_cache;
 
 architecture behavior of tb_RISCV_w_cache is
+	constant C_PHY_ADDR_WIDTH : integer := 32;
 
 	-- Component Declaration for the Unit Under Test (UUT)
 	component RISCV_w_cache is
 	port (
 		clk				: in	std_logic;
 		reset			: in	std_logic;
-		addr_phy_o		: out	std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
+		addr_phy_o		: out	std_logic_vector(C_PHY_ADDR_WIDTH-1 downto 0);
 		dread_phy_i		: in	std_logic_vector(31 downto 0);
 		dwrite_phy_o	: out	std_logic_vector(31 downto 0);
 		we_phy_o		: out	std_logic
 	);
 	end component;
-	    
+	     constant C_NUM_COL : integer := 4; -- fixed, word is 4 bytes
+	constant C_COL_WIDTH : integer := 8; -- fixed, byte is 8 bits   
 	constant C_SHRINK_ADDR_WIDTH : integer := 10;
     constant C_SHRINK_ADDR_SPACE    : integer := 2**C_SHRINK_ADDR_WIDTH;
 	-- Inputs
@@ -41,8 +43,8 @@ architecture behavior of tb_RISCV_w_cache is
 	signal	dread_phy_i		: std_logic_vector(31 downto 0):=(others=>'0');
 
 	-- Outputs
-	signal	addr_phy_s		: std_logic_vector(PHY_ADDR_WIDTH-1 downto 0);
-    signal	addr_phy_short_s: std_logic_vector(PHY_ADDR_WIDTH-C_SHRINK_ADDR_WIDTH-3 downto 0);
+	signal	addr_phy_s		: std_logic_vector(C_PHY_ADDR_WIDTH-1 downto 0);
+    signal	addr_phy_short_s: std_logic_vector(C_PHY_ADDR_WIDTH-C_SHRINK_ADDR_WIDTH-3 downto 0);
 
 	signal	dwrite_phy_s	: std_logic_vector(31 downto 0);
 	signal	we_phy_s		: std_logic;
@@ -79,14 +81,14 @@ begin
 		wait for clk_period/2;
 	end process;
 
-    addr_phy_short_s <= addr_phy_s(PHY_ADDR_WIDTH-C_SHRINK_ADDR_WIDTH-1 downto 2);
+    addr_phy_short_s <= addr_phy_s(C_PHY_ADDR_WIDTH-C_SHRINK_ADDR_WIDTH-1 downto 2);
 	rst_phy_s <= '0';
 	en_phy_s <= '1';
 	regce_phy_s <= '1';
 	physical_memory : entity work.RAM_sp_rf(rtl)
 		generic map (
 				RAM_WIDTH => C_COL_WIDTH*C_NUM_COL,
-				RAM_DEPTH => ((2**(PHY_ADDR_WIDTH-C_SHRINK_ADDR_WIDTH))/4), -- -2 to address 4 bytes in a word
+				RAM_DEPTH => ((2**(C_PHY_ADDR_WIDTH-C_SHRINK_ADDR_WIDTH))/4), -- -2 to address 4 bytes in a word
 				RAM_PERFORMANCE => "LOW_LATENCY",
 				INIT_FILE => "/home/fouste/Uni/RISCV_VHDL/RV32I/simulation_sources/assembly_code.txt" 
 		)
