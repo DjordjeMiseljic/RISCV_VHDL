@@ -59,7 +59,7 @@
 #include "assembly.h"
 
 // SUPPORT CONSTANTS
-#define MEMORY_SIZE				2*1024
+#define MEMORY_SIZE				6*1024
 #define FIRST_N_NBYTES			128
 // REGISTERS
 #define USR_RISCV_CE 			(XPAR_RISCV_AXI_0_AXIL_S_BASEADDR + 0)
