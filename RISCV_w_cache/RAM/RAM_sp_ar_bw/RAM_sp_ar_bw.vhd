@@ -9,7 +9,7 @@ entity RAM_sp_ar_bw is
 generic (
     NB_COL    : integer := 4;                       -- Specify number of columns (number of bytes)
     COL_WIDTH : integer := 8;                       -- Specify column width (byte width, typically 8 or 9)
-    RAM_DEPTH : integer := 32;                    -- Specify RAM depth (number of entries)
+    RAM_DEPTH : integer := 256;                    -- Specify RAM depth (number of entries)
     RAM_PERFORMANCE : string := "LOW_LATENCY";      -- Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
     INIT_FILE : string := ""            -- Specify name/location of RAM initialization file if using one (leave blank if not)
     );

@@ -17,9 +17,9 @@ USE std.textio.all;
 entity RAM_tdp_rf is
 generic (
 
-    RAM_WIDTH : integer := 16;                      -- Specify RAM data width
-    RAM_DEPTH : integer := 512;                    -- Specify RAM depth (number of entries)
-    RAM_PERFORMANCE : string := "LOW_LATENCY";      -- Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
+    RAM_WIDTH : integer := 26;                      -- Specify RAM data width
+    RAM_DEPTH : integer := 64;                    -- Specify RAM depth (number of entries)
+    RAM_PERFORMANCE : string := "HIGH_PERFORMANCE";      -- Select "HIGH_PERFORMANCE" or "LOW_LATENCY" 
     INIT_FILE : string := ""            -- Specify name/location of RAM initialization file if using one (leave blank if not)
     );
 

@@ -7,8 +7,8 @@ USE std.textio.all;
 
 entity ram_sp_ar is
 generic (
-    RAM_WIDTH : integer := 32;                      -- Specify RAM data width
-    RAM_DEPTH : integer := 2048;                    -- Specify RAM depth (number of entries)
+    RAM_WIDTH : integer := 24;                      -- Specify RAM data width
+    RAM_DEPTH : integer := 16;                    -- Specify RAM depth (number of entries)
     INIT_FILE : string := ""            -- Specify name/location of RAM initialization file if using one (leave blank if not)
     );
 
