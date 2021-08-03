@@ -91,7 +91,7 @@ begin
 
    --***********  Sequential logic  ******************
    --Program Counter
-   pc_proc : process (clk) is
+   pc_proc : process (clk, ce) is
    begin
       if (rising_edge(clk) and ce='1') then
          if (reset = '0')then
@@ -103,7 +103,7 @@ begin
    end process;
 
    --IF/ID register
-   if_id : process (clk) is
+   if_id : process (clk, ce) is
    begin
       if (rising_edge(clk) and ce='1') then
          if(if_id_en_i = '1')then
@@ -119,7 +119,7 @@ begin
    end process;
 
    --ID/EX register
-   id_ex : process (clk) is
+   id_ex : process (clk, ce) is
    begin
       if (rising_edge(clk) and ce='1') then
          if (reset = '0' or id_ex_flush_i = '1')then
@@ -139,7 +139,7 @@ begin
    end process;
 
    --EX/MEM register
-   ex_mem : process (clk) is
+   ex_mem : process (clk, ce) is
    begin
       if (rising_edge(clk) and ce='1') then
          if (reset = '0')then
@@ -159,7 +159,7 @@ begin
    end process;
 
    --MEM/WB register
-   mem_wb : process (clk) is
+   mem_wb : process (clk, ce) is
    begin
       if (rising_edge(clk) and ce='1') then
          if (reset = '0')then
