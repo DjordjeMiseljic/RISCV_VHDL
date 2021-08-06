@@ -25,7 +25,7 @@ architecture Behavioral of register_bank is
 begin
 
    -- synchronous write, reset
-   reg_bank_write : process (clk) is
+   reg_bank_write : process (clk, ce) is
    begin
       if (falling_edge(clk) and ce='1')then
          if (reset = '0')then
