@@ -85,7 +85,7 @@ begin
 							alu_op_o <= remu_op;
 						end if;
 				end case;
-			when others =>
+			when others => -- immediate
 				case funct3_i is
 					when "000" =>
 						alu_op_o <= add_op;

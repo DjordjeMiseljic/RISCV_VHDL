@@ -34,8 +34,9 @@ entity data_path is
 		if_id_flush_i : in std_logic;
 		id_ex_flush_i : in std_logic;
 		-- control signals for stalling
-		pc_en_i    : in std_logic;
-		if_id_en_i : in std_logic);
+		pc_en_i : in std_logic;
+		if_id_en_i : in std_logic;
+		id_ex_en_i : in std_logic);
 end entity;
 
 architecture Behavioral of data_path is
@@ -85,16 +86,18 @@ architecture Behavioral of data_path is
 
 begin
 
-	--***********  Sequential logic  ******************
+	--***********  Sequential logic  ******************    	
 	--Program Counter
 	pc_proc : process (clk, ce) is
 	begin
 		if (rising_edge(clk) and ce = '1') then
+		  if (pc_en_i = '1') then
 			if (reset = '0') then
 				pc_reg_if_s <= (others => '0');
-			elsif (pc_en_i = '1') then
+			else
 				pc_reg_if_s <= pc_next_if_s;
 			end if;
+		  end if;
 		end if;
 	end process;
 
@@ -118,19 +121,21 @@ begin
 	id_ex : process (clk, ce) is
 	begin
 		if (rising_edge(clk) and ce = '1') then
-			if (reset = '0' or id_ex_flush_i = '1') then
-				pc_adder_ex_s <= (others => '0');
-				rs1_data_ex_s <= (others => '0');
-				rs2_data_ex_s <= (others => '0');
-				immediate_extended_ex_s <= (others => '0');
-				rd_address_ex_s <= (others => '0');
-			else
-				pc_adder_ex_s <= pc_adder_id_s;
-				rs1_data_ex_s <= rs1_data_id_s;
-				rs2_data_ex_s <= rs2_data_id_s;
-				immediate_extended_ex_s <= immediate_extended_id_s;
-				rd_address_ex_s <= rd_address_id_s;
-			end if;
+            if (id_ex_en_i = '1') then
+                if (reset = '0' or id_ex_flush_i = '1') then
+                    pc_adder_ex_s <= (others => '0');
+                    rs1_data_ex_s <= (others => '0');
+                    rs2_data_ex_s <= (others => '0');
+                    immediate_extended_ex_s <= (others => '0');
+                    rd_address_ex_s <= (others => '0');
+                else
+                    pc_adder_ex_s <= pc_adder_id_s;
+                    rs1_data_ex_s <= rs1_data_id_s;
+                    rs2_data_ex_s <= rs2_data_id_s;
+                    immediate_extended_ex_s <= immediate_extended_id_s;
+                    rd_address_ex_s <= rd_address_id_s;
+                end if;
+            end if;
 		end if;
 	end process;
 
@@ -247,6 +252,7 @@ begin
 		generic map(
 			WIDTH => 32)
 		port map(
+		    clk   => clk,
 			a_i   => a_ex_s,
 			b_i   => b_ex_s,
 			op_i  => alu_op_i,

@@ -39,9 +39,9 @@ architecture structural of TOP_RISCV is
    signal branch_condition_s : std_logic;
    signal branch_op_s        : std_logic_vector(1 downto 0);
 
-   signal pc_en_s            : std_logic;
-   signal if_id_en_s         : std_logic;
-         
+   signal pc_en_s          : std_logic;
+   signal if_id_en_s       : std_logic;
+   signal id_ex_en_s       : std_logic;
    
 begin
    -- Data_path instance
@@ -77,7 +77,8 @@ begin
          id_ex_flush_i       => id_ex_flush_s,
          -- control signals for stalling
          pc_en_i             => pc_en_s,
-         if_id_en_i          => if_id_en_s); 
+         if_id_en_i          => if_id_en_s,
+         id_ex_en_i          => id_ex_en_s); 
 
    --flush current instruction
    instr_mem_flush_o <= if_id_flush_s;
@@ -111,8 +112,9 @@ begin
          id_ex_flush_o       => id_ex_flush_s,
          -- control signals for stalling
          pc_en_o             => pc_en_s,
-         if_id_en_o          => if_id_en_s);
-   
-   -- stall currnet instruction
+         if_id_en_o          => if_id_en_s,
+         id_ex_en_o          => id_ex_en_s); 
+
+   -- stall current instruction
    instr_mem_en_o <= if_id_en_s;
 end architecture;

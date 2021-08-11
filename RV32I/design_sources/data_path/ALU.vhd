@@ -7,6 +7,7 @@ entity ALU is
 	generic (
 		WIDTH : natural := 32);
 	port (
+	    clk   : in  std_logic;
 		a_i   : in  std_logic_vector(WIDTH - 1 downto 0); --first input
 		b_i   : in  std_logic_vector(WIDTH - 1 downto 0); --second input
 		op_i  : in  alu_op_t; --operation select
@@ -29,7 +30,14 @@ architecture behavioral of ALU is
     signal m1_n, m2_n, m3_n, mu1_n, mu2_n, mu3_n : std_logic_vector(2 * WIDTH - 1 downto 0); 
 	signal msu1_r, msu2_r, msu3_r : std_logic_vector(2 * WIDTH + 1 downto 0); 
     signal msu1_n, msu2_n, msu3_n : std_logic_vector(2 * WIDTH + 1 downto 0); 
-
+    signal d1_r, d2_r, d3_r : std_logic_vector(WIDTH - 1 downto 0);
+    signal d1_n, d2_n, d3_n : std_logic_vector(WIDTH - 1 downto 0);
+    signal du1_r, du2_r, du3_r : std_logic_vector(WIDTH - 1 downto 0);
+    signal du1_n, du2_n, du3_n : std_logic_vector(WIDTH - 1 downto 0);
+    signal r1_r, r2_r, r3_r : std_logic_vector(WIDTH - 1 downto 0); 
+    signal r1_n, r2_n, r3_n : std_logic_vector(WIDTH - 1 downto 0);
+    signal ru1_r, ru2_r, ru3_r : std_logic_vector(WIDTH - 1 downto 0);
+    signal ru1_n, ru2_n, ru3_n : std_logic_vector(WIDTH - 1 downto 0);
 begin
 
 	alu : process (a_i, b_i) is begin
@@ -58,22 +66,71 @@ begin
 		sll_res <= std_logic_vector(shift_left(unsigned(a_i), to_integer(unsigned(b_i(l2WIDTH downto 0)))));
 		srl_res <= std_logic_vector(shift_right(unsigned(a_i), to_integer(unsigned(b_i(l2WIDTH downto 0)))));
 		sra_res <= std_logic_vector(shift_right(signed(a_i), to_integer(unsigned(b_i(l2WIDTH downto 0)))));
-		--multiplication
-		muls_res <= std_logic_vector(signed(a_i) * signed(b_i));
-		mulsu_res <= std_logic_vector(signed(a_i(WIDTH - 1) & a_i) * signed('0' & b_i));
-		mulu_res <= std_logic_vector(unsigned(a_i) * unsigned(b_i));
-		--division && mode
-		if (b_i /= std_logic_vector(to_unsigned(0, WIDTH))) then
-		  divs_res <= std_logic_vector(signed(a_i)/signed(b_i));
-		  divu_res <= std_logic_vector(unsigned(a_i)/unsigned(b_i));
-		  rems_res <= std_logic_vector(signed(a_i) rem signed(b_i));
-		  remu_res <= std_logic_vector(unsigned(a_i) rem unsigned(b_i));
-		else
-          divs_res <= (others => '1');
-          divu_res <= (others => '1');
-          rems_res <= (others => '1');
-          remu_res <= (others => '1');
-		end if;
+--		--multiplication
+--		muls_res <= std_logic_vector(signed(a_i) * signed(b_i));
+--		mulsu_res <= std_logic_vector(signed(a_i(WIDTH - 1) & a_i) * signed('0' & b_i));
+--		mulu_res <= std_logic_vector(unsigned(a_i) * unsigned(b_i));
+--		--division && mode
+--		if (b_i /= std_logic_vector(to_unsigned(0, WIDTH))) then
+--		  divs_res <= std_logic_vector(signed(a_i)/signed(b_i));
+--		  divu_res <= std_logic_vector(unsigned(a_i)/unsigned(b_i));
+--		  rems_res <= std_logic_vector(signed(a_i) rem signed(b_i));
+--		  remu_res <= std_logic_vector(unsigned(a_i) rem unsigned(b_i));
+--		else
+--          divs_res <= (others => '1');
+--          divu_res <= (others => '1');
+--          rems_res <= (others => '1');
+--          remu_res <= (others => '1');
+--		end if;
+	end process;
+	
+	m1_n <= muls_res;
+	mu1_n <= mulu_res;
+	msu1_n <= mulsu_res;
+	d1_n <= divs_res;
+	du1_n <= divu_res;
+	dsp: process (clk) is begin 
+	   if rising_edge(clk) then
+    	   m1_r <= std_logic_vector(signed(a_i) * signed(b_i));--muls_res;
+    	   m2_r <= m1_r;
+    	   m3_r <= m2_r;
+           
+           mu1_r <= std_logic_vector(unsigned(a_i) * unsigned(b_i));--mulu_res;
+           mu2_r <= mu1_r;
+           mu3_r <= mu2_r;
+           
+    	   msu1_r <= std_logic_vector(signed(a_i(WIDTH - 1) & a_i) * signed('0' & b_i));--mulsu_res;
+    	   msu2_r <= msu1_r;
+    	   msu3_r <= msu2_r;
+    	   
+--    	   if (b_i /= std_logic_vector(to_unsigned(0, WIDTH))) then
+--              d1_r <= std_logic_vector(signed(a_i)/signed(b_i));
+--              du1_r <= std_logic_vector(unsigned(a_i)/unsigned(b_i));
+--              r1_r <= std_logic_vector(signed(a_i) rem signed(b_i));
+--              ru1_r <= std_logic_vector(unsigned(a_i) rem unsigned(b_i));
+--            else
+--              d1_r <= (others => '1');
+--              du1_r <= (others => '1');
+--              r1_r <= (others => '1');
+--              ru1_r <= (others => '1');
+--            end if;
+           
+----           d1_r <= divs_res;
+--           d2_r <= d1_r;
+--           d3_r <= d2_r;
+           
+----           du1_r <= divu_res;
+--           du2_r <= du1_r;
+--           du3_r <= du2_r;
+           
+----           r1_r <= rems_res;
+--           r2_r <= r1_r;
+--           r3_r <= r2_r;
+           
+----           ru1_r <= remu_res;
+--           ru2_r <= ru1_r;
+--           ru3_r <= ru2_r;
+	   end if;
 	end process;
 
 	-- SELECT RESULT
@@ -91,14 +148,23 @@ begin
 		sll_res when sll_op, -- shift left logic
 		srl_res when srl_op, -- shift right logic
 		sra_res when sra_op, -- shift right arithmetic
-		mulu_res(WIDTH - 1 downto 0) when mul_op, -- multiply lower
-		muls_res(2 * WIDTH - 1 downto WIDTH) when mulh_op, -- multiply higher signed
-		mulsu_res(2 * WIDTH - 1 downto WIDTH) when mulhsu_op, -- multiply higher signed and unsigned
-		mulu_res(2 * WIDTH - 1 downto WIDTH) when mulhu_op, -- multiply higher unsigned
-		divs_res when div_op, -- divide unsigned
-		divu_res when divu_op, -- divide signed
-		rems_res when rem_op, -- reminder signed
-		remu_res when remu_op, -- reminder signed
+		m3_r(WIDTH - 1 downto 0) when mul_op, -- multiply lower
+		m3_r(2 * WIDTH - 1 downto WIDTH) when mulh_op, -- multiply higher signed
+		msu3_r(2 * WIDTH - 1 downto WIDTH) when mulhsu_op, -- multiply higher signed and unsigned
+		mu3_r(2 * WIDTH - 1 downto WIDTH) when mulhu_op, -- multiply higher unsigned
+		d3_r when div_op, -- divide unsigned
+		du3_r when divu_op, -- divide signed
+		r3_r when rem_op, -- reminder signed
+		ru3_r when remu_op, -- reminder signed
+		
+--		mulu_res(WIDTH - 1 downto 0) when mul_op, -- multiply lower
+--		muls_res(2 * WIDTH - 1 downto WIDTH) when mulh_op, -- multiply higher signed
+--		mulsu_res(2 * WIDTH - 1 downto WIDTH) when mulhsu_op, -- multiply higher signed and unsigned
+--		mulu_res(2 * WIDTH - 1 downto WIDTH) when mulhu_op, -- multiply higher unsigned
+--		divs_res when div_op, -- divide unsigned
+--		divu_res when divu_op, -- divide signed
+--		rems_res when rem_op, -- reminder signed
+--		remu_res when remu_op, -- reminder signed
 		(others => '1') when others;
 	-- flag outputs
 	-- set zero output flag when result is zero

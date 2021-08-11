@@ -33,7 +33,8 @@ entity control_path is
       id_ex_flush_o      : out std_logic;
       -- control signals for stalling
       pc_en_o            : out std_logic;
-      if_id_en_o         : out std_logic
+      if_id_en_o         : out std_logic;
+      id_ex_en_o       : out std_logic
       );
 end entity;
 
@@ -41,7 +42,10 @@ end entity;
 architecture behavioral of control_path is
 
    --********** REGISTER CONTROL ***************
-   signal if_id_en_s        : std_logic;   
+   signal if_id_en_hazard_s : std_logic;   
+   signal pc_en_hazard_s : std_logic; 
+   signal if_id_en_m_s : std_logic; 
+   signal pc_en_m_s : std_logic; 
    signal if_id_flush_s     : std_logic;   
    signal id_ex_flush_s     : std_logic;   
    
@@ -53,6 +57,8 @@ architecture behavioral of control_path is
    signal set_a_zero_id_s   : std_logic;   
    
    signal control_pass_s    : std_logic;
+   signal control_pass_hazard_s : std_logic;
+   signal control_pass_m_s   : std_logic;
    signal rs1_in_use_id_s   : std_logic;
    signal rs2_in_use_id_s   : std_logic;
    signal alu_src_a_id_s    : std_logic;
@@ -84,7 +90,22 @@ architecture behavioral of control_path is
    signal rd_address_ex_s   : std_logic_vector (4 downto 0);
    signal bcc_ex_s          : std_logic;
    signal branch_conf_ex_s  : std_logic;
-
+   signal alu_op_s          : alu_op_t;
+    
+   signal branch_type_ex_n  : std_logic_vector(1 downto 0);
+   signal funct7_ex_n       : std_logic_vector(6 downto 0);
+   signal funct3_ex_n       : std_logic_vector(2 downto 0);
+   signal set_a_zero_ex_n   : std_logic;
+   signal alu_src_a_ex_n    : std_logic;
+   signal alu_src_b_ex_n    : std_logic;
+   signal mem_to_reg_ex_n   : std_logic_vector(1 downto 0);
+   signal alu_2bit_op_ex_n  : std_logic_vector(1 downto 0);
+   signal rs1_address_ex_n  : std_logic_vector (4 downto 0);
+   signal rs2_address_ex_n  : std_logic_vector (4 downto 0);
+   signal rd_address_ex_n   : std_logic_vector (4 downto 0);
+   signal rd_we_ex_n        : std_logic;
+   signal data_mem_we_ex_n  : std_logic;
+   
    --*********       MEMORY        **************
    signal funct3_mem_s      : std_logic_vector(2 downto 0);
    signal data_mem_we_mem_s : std_logic;
@@ -169,22 +190,52 @@ begin
             rd_we_ex_s       <= '0';
             data_mem_we_ex_s <= '0';
          else
-            branch_type_ex_s <= branch_type_id_s;
-            funct7_ex_s      <= funct7_id_s;
-            funct3_ex_s      <= funct3_id_s;
-            set_a_zero_ex_s  <= set_a_zero_id_s;
-            alu_src_a_ex_s   <= alu_src_a_id_s;
-            alu_src_b_ex_s   <= alu_src_b_id_s;
-            mem_to_reg_ex_s  <= mem_to_reg_id_s;
-            alu_2bit_op_ex_s <= alu_2bit_op_id_s;
-            rs1_address_ex_s <= rs1_address_id_s; 
-			rs2_address_ex_s <= rs2_address_id_s;
-            rd_address_ex_s  <= rd_address_id_s;
-            rd_we_ex_s       <= rd_we_id_s;
-            data_mem_we_ex_s <= data_mem_we_id_s;
+            if control_pass_m_s = '1' then
+                branch_type_ex_s <= branch_type_id_s;
+                funct7_ex_s      <= funct7_id_s;
+                funct3_ex_s      <= funct3_id_s;
+                set_a_zero_ex_s  <= set_a_zero_id_s;
+                alu_src_a_ex_s   <= alu_src_a_id_s;
+                alu_src_b_ex_s   <= alu_src_b_id_s;
+                mem_to_reg_ex_s  <= mem_to_reg_id_s;
+                alu_2bit_op_ex_s <= alu_2bit_op_id_s;
+                rs1_address_ex_s <= rs1_address_id_s; 
+                rs2_address_ex_s <= rs2_address_id_s;
+                rd_address_ex_s  <= rd_address_id_s;
+                rd_we_ex_s       <= rd_we_id_s;
+                data_mem_we_ex_s <= data_mem_we_id_s;
+            else
+                branch_type_ex_s <= branch_type_ex_n;
+                funct7_ex_s      <= funct7_ex_n;
+                funct3_ex_s      <= funct3_ex_n;
+                set_a_zero_ex_s  <= set_a_zero_ex_n;
+                alu_src_a_ex_s   <= alu_src_a_ex_n;
+                alu_src_b_ex_s   <= alu_src_b_ex_n;
+                mem_to_reg_ex_s  <= mem_to_reg_ex_n;
+                alu_2bit_op_ex_s <= alu_2bit_op_ex_n;
+                rs1_address_ex_s <= rs1_address_ex_n; 
+                rs2_address_ex_s <= rs2_address_ex_n;
+                rd_address_ex_s  <= rd_address_ex_n;
+                rd_we_ex_s       <= rd_we_ex_n;
+                data_mem_we_ex_s <= data_mem_we_ex_n;
+            end if;
          end if;
       end if;
    end process;
+   
+   branch_type_ex_n <= branch_type_ex_s;
+   funct7_ex_n <= funct7_ex_s;
+   funct3_ex_n <= funct3_ex_s;
+   set_a_zero_ex_n <= set_a_zero_ex_s;
+   alu_src_a_ex_n <= alu_src_a_ex_s;
+   alu_src_b_ex_n <= alu_src_b_ex_s;
+   mem_to_reg_ex_n <= mem_to_reg_ex_s;
+   alu_2bit_op_ex_n <= alu_2bit_op_ex_s;
+   rs1_address_ex_n <= rs1_address_ex_s;
+   rs2_address_ex_n <= rs2_address_ex_s;
+   rd_address_ex_n <= rd_address_ex_s;
+   rd_we_ex_n <= rd_we_ex_s;
+   data_mem_we_ex_n <= data_mem_we_ex_s;
 
    --EX/MEM register
    ex_mem : process (clk, ce) is
@@ -249,7 +300,7 @@ begin
          alu_2bit_op_i => alu_2bit_op_ex_s,
          funct3_i      => funct3_ex_s,
          funct7_i      => funct7_ex_s,
-         alu_op_o      => alu_op_o);
+         alu_op_o      => alu_op_s);
 
    -- Forwarding_unit
    forwarding_u : entity work.forwarding_unit(behavioral)
@@ -274,16 +325,32 @@ begin
          rd_address_ex_i => rd_address_ex_s,
          mem_to_reg_ex_i => mem_to_reg_ex_s,
 
-         pc_en_o        => pc_en_o,
-         if_id_en_o     => if_id_en_s,
-         control_pass_o => control_pass_s);
+         pc_en_o        => pc_en_hazard_s,
+         if_id_en_o     => if_id_en_hazard_s,
+         control_pass_o => control_pass_hazard_s);
 
+    -- M type stall unit
+    m_stall_u : entity work.m_stall_unit(behavioral)
+       port map (
+         clk            => clk,
+         ce             => ce,
+         reset          => reset,    
+         instruction_i  => instruction_i,
+         alu_op_i       => alu_op_s,
 
+         pc_en_o        => pc_en_m_s,
+         if_id_en_o     => if_id_en_m_s,
+         id_ex_en_o     => id_ex_en_o,
+         control_pass_o => control_pass_m_s
+       );
+   
+   pc_en_o <= pc_en_hazard_s and pc_en_m_s;
+   if_id_en_o <= if_id_en_hazard_s and if_id_en_m_s;
+   control_pass_s <= control_pass_hazard_s;-- and control_pass_m_s;
 
    --********** Outputs **************
 
    -- forward control signals to datapath
-   if_id_en_o    <= if_id_en_s;
    mem_to_reg_o  <= mem_to_reg_wb_s;
    alu_src_b_o   <= alu_src_b_ex_s;
    alu_src_a_o   <= alu_src_a_ex_s;
@@ -291,6 +358,7 @@ begin
    rd_we_o       <= rd_we_wb_s;
    if_id_flush_o <= if_id_flush_s;
    id_ex_flush_o <= id_ex_flush_s;
+   alu_op_o      <= alu_op_s;
 
    -- load_type controls which bytes are taken from memory in wb stage
    load_type_o <= funct3_wb_s;
